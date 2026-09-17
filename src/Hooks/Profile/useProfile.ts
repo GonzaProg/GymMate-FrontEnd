@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useAuthUser } from "../Auth/useAuthUser"; 
 import { UsuarioApi, type UpdateProfileDTO } from "../../API/Usuarios/UsuarioApi"; 
-import { showSuccess, showError } from "../../Helpers/Alerts";
+import { showSuccess, showError, showConfirmDelete } from "../../Helpers/Alerts";
 import { CloudinaryApi } from "../../Helpers/Cloudinary/Cloudinary"; 
+import { useLogout } from "../Login/useLogout"; // Importar hook de logout para eliminar cuenta
 
 export const useProfile = () => {
   const { currentUser } = useAuthUser();
+  const { logout } = useLogout();
   const localId = currentUser?.id;
 
   const [displayUser, setDisplayUser] = useState(currentUser);
@@ -167,6 +169,28 @@ export const useProfile = () => {
     setPassForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
   };
 
+  const handleDeleteAccount = async () => {
+    if (!localId) return;
+
+    const confirm = await showConfirmDelete(
+        "¿Eliminar Cuenta?",
+        "Esta acción es irreversible. Se eliminarán todos tus datos personales, rutinas, dietas y progresos."
+    );
+
+    if (confirm.isConfirmed) {
+        setLoading(true);
+        try {
+            await UsuarioApi.deleteAccount(localId);
+            // La API borrará el usuario, ahora limpiamos la sesión del frontend
+            logout(); // Ya redirige a login y limpia localStorage
+        } catch (error: any) {
+            showError(error.response?.data?.error || "Ocurrió un error al intentar eliminar la cuenta.");
+        } finally {
+            setLoading(false);
+        }
+    }
+  };
+
   return {
     loading,
     uploadingImage, 
@@ -183,6 +207,7 @@ export const useProfile = () => {
     handleImageUpload,
     handleSaveProfile,
     handleChangePassword,
-    handleCancelPassword
+    handleCancelPassword,
+    handleDeleteAccount
   };
 };
