@@ -51,7 +51,7 @@ export const showConfirmDelete = async (title: string, text: string) => {
         customClass: {
             ...commonCustomClass,
             actions: 'flex gap-4',
-            confirmButton: 'bg-red-500/20 text-red-400 border border-red-500/80 hover:bg-red-500/30 font-bold py-3 px-6 rounded-xl transition-colors shadow-sm',
+            confirmButton: 'bg-red-900/30 text-red-400 border border-red-500/80 hover:bg-red-500/30 font-bold py-3 px-6 rounded-xl transition-colors shadow-sm',
             cancelButton: 'bg-[#1a1a1a] text-white hover:bg-white/10 border border-white/10 font-bold py-3 px-6 rounded-xl transition-colors shadow-sm'
         },
         buttonsStyling: false

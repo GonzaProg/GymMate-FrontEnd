@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useProfile } from "../../Hooks/Profile/useProfile";
 import { useLogout } from "../../Hooks/Login/useLogout"; // Importamos el hook de logout
 import { Input } from "../../Components/UI/Input";
@@ -5,7 +6,7 @@ import { Button } from "../../Components/UI/Button";
 import { AppStyles } from "../../Styles/AppStyles"; 
 import { ProfileStyles } from "../../Styles/ProfileStyles"; 
 import { formatearFechaUTC } from "../../Helpers/DateUtils";
-import { Camera, Edit2, Lock, LogOut } from "lucide-react";
+import { Camera, Edit2, Lock, LogOut, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 
 interface ProfileProps {
   isMobile?: boolean; // Prop para diferenciar el contexto
@@ -13,6 +14,7 @@ interface ProfileProps {
 
 export const Profile = ({ isMobile = false }: ProfileProps) => {
   const { logout } = useLogout();
+  const [showDangerZone, setShowDangerZone] = useState(false);
   
   const { 
     loading, 
@@ -30,7 +32,8 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
     handleChangePassword, 
     handleCancelPassword,
     uploadingImage,
-    imagePreview
+    imagePreview,
+    handleDeleteAccount
   } = useProfile();
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-300">Cargando...</div>;
@@ -51,7 +54,7 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
         <div className={cardWidthClass}>
 
           {/* --- CARD PERFIL --- */}
-          <div className="w-full backdrop-blur-xl bg-gray-900/60 border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
+          <div className="w-full backdrop-blur-xl bg-gray-900/10 border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
             
             <div className={ProfileStyles.coverGradient}></div>
 
@@ -202,7 +205,7 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
           </div>
 
           {/* --- CARD SEGURIDAD --- */}
-          <div className={AppStyles.glassCard + " p-6 md:p-8 bg-gray-900/60"}>
+          <div className={AppStyles.glassCard + " p-6 md:p-8 bg-gray-900/10"}>
             {!showPasswordSection ? (
               <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                   <div className="flex flex-col md:flex-row items-center gap-4">
@@ -236,9 +239,45 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
             )}
           </div>
 
+          {/* --- CARD ZONA DE PELIGRO (SOLO ALUMNO) --- */}
+          {userData.rol === 'Alumno' && (
+            <div className={AppStyles.glassCard + " p-6 md:p-8 bg-red-900/10 border-red-500/20"}>
+                <div 
+                  className="flex justify-between items-center cursor-pointer select-none"
+                  onClick={() => setShowDangerZone(!showDangerZone)}
+                >
+                    <div className="flex items-center gap-4">
+                      <div className="bg-red-500/20 p-2 rounded-lg text-red-500"><AlertTriangle className="w-7 h-7" /></div>
+                      <div>
+                          <span className="font-bold text-red-500 text-xl block">Zona de Peligro</span>
+                          <span className="text-gray-400 text-sm">Opciones destructivas para tu cuenta</span>
+                      </div>
+                    </div>
+                    <div className="text-red-500">
+                        {showDangerZone ? <ChevronUp className="w-6 h-6" /> : <ChevronDown className="w-6 h-6" />}
+                    </div>
+                </div>
+
+                {showDangerZone && (
+                  <div className="mt-6 pt-6 border-t border-red-500/20 animate-fade-in-up flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                      <div className="text-gray-300 text-sm md:max-w-md">
+                          Al eliminar tu cuenta, todos tus datos (rutinas, progresos, dietas, etc.) se borrarán permanentemente. Esta acción <strong>no se puede deshacer</strong>.
+                      </div>
+                      <button 
+                        onClick={handleDeleteAccount} 
+                        disabled={loading}
+                        className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/50 font-bold px-6 py-3 rounded-xl transition-all w-full md:w-auto mt-4 md:mt-0 shadow-lg"
+                      >
+                         {loading ? 'Eliminando...' : 'Eliminar Cuenta Permanentemente'}
+                      </button>
+                  </div>
+                )}
+            </div>
+          )}
+
           {/* --- CARD CERRAR SESIÓN (SOLO MOBILE/ALUMNO) --- */}
           {isMobile && (
-            <div className={AppStyles.glassCard + " p-8 bg-gray-900/60"}>                
+            <div className={AppStyles.glassCard + " p-8 bg-gray-900/10"}>                
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
                       <div className="bg-red-900/30 p-2 rounded-lg"><LogOut className="w-7 h-7 text-red-500" /></div>
