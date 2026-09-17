@@ -1,11 +1,11 @@
 import { Dumbbell, Medal, User } from "lucide-react";
 
-interface MobileNavbarProps {
+interface NavbarInferiorProps {
   activeTab: number;
   setActiveTab: (index: number) => void;
 }
 
-export const MobileNavbar = ({ activeTab, setActiveTab }: MobileNavbarProps) => {
+export const NavbarInferior = ({ activeTab, setActiveTab }: NavbarInferiorProps) => {
   const navItems = [
     { id: "inicio", label: "Inicio", index: 0, Icon: HomeIcon },
     { id: "rutinas", label: "Rutinas", index: 1, Icon: DumbbellIcon },
