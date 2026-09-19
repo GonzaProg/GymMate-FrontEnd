@@ -11,9 +11,11 @@ import TricepsImg from '../../assets/Tríceps.png';
 import HombrosImg from '../../assets/Hombros.png';
 import CuadricepsImg from '../../assets/Cuádriceps.png';
 import IsquiotibialesImg from '../../assets/Isquiotibiales.png';
+import HalterofiliaImg from '../../assets/Halterofilia.png';
 
 export const MuscleImageMap: Record<string, string> = {
     "Cardio": CardioImg,
+    "Halterofilia": HalterofiliaImg,
     "Abdomen": AbdomenImg,
     "Antebrazos": AntebrazosImg,
     "Cuello": CuelloImg,
