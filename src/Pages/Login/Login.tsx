@@ -13,6 +13,7 @@ import { GymCodeModal } from "../../Components/GymCodeModal/GymCodeModal";
 import { useGymConfig } from "../../Context/GymConfigContext";
 import { Rocket, AlertTriangle, Dumbbell } from "lucide-react";
 import logoPlayStore from "../../assets/LogoDescargaPlayStore.png";
+import logoAppStore from "../../assets/LogoDescargaAppStore.png";
 import { Capacitor } from "@capacitor/core";
 
 export const Login = () => {
@@ -216,19 +217,31 @@ export const Login = () => {
                         </Link>
                     </div>
 
-                    {/* LINK DE DESCARGA PLAY STORE */}
+                    {/* LINKS DE DESCARGA */}
                     {!Capacitor.isNativePlatform() && (
-                        <div className="flex justify-center animate-fade-in">
+                        <div className="mt-4 flex justify-center items-center gap-3 sm:gap-4 animate-fade-in w-full">
                             <a 
                             href="https://play.google.com/store/apps/details?id=com.GymMate.app&hl=es_AR" 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="hover:scale-110 transition-transform duration-300"
+                            className="hover:scale-105 transition-transform duration-300"
                             >
                             <img 
                                 src={logoPlayStore} 
                                 alt="Descargar en Play Store" 
-                                className="h-32 w-auto drop-shadow-xl" 
+                                className="w-40 sm:w-48 h-auto object-contain drop-shadow-xl" 
+                            />
+                            </a>
+                            <a 
+                            href="https://apps.apple.com/ar/app/gymmate/id6810016858" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="hover:scale-105 transition-transform duration-300"
+                            >
+                            <img 
+                                src={logoAppStore} 
+                                alt="Descargar en App Store" 
+                                className="w-40 sm:w-48 h-auto object-contain drop-shadow-xl" 
                             />
                             </a>
                         </div>
