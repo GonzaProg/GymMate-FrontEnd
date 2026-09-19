@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar } from "../Navbar";
+import { NavbarSuperior } from "../Mobile/NavbarSuperior";
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -58,7 +58,7 @@ export const PageLayout = ({
         <div className="absolute inset-0 bg-black/60 z-0"></div> 
       )}
       
-      {showNavbar && <div className="relative z-20"><Navbar /></div>}
+      {showNavbar && <div className="relative z-20"><NavbarSuperior /></div>}
       
       <div className={`container mx-auto p-4 relative z-10 flex-1 mt-6 ${!backgroundImage ? "bg-gray-100" : ""}`}>
         {children}

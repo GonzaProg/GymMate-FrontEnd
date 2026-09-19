@@ -12,13 +12,13 @@ import "swiper/css/pagination";
 import { useOptimizedHome } from "../Hooks/Home/useOptimizedHome";
 import { useAlertasRecepcion } from "../Hooks/Asistencias/useAlertasRecepcion";
 import { usePushNotifications } from "../Hooks/Notificaciones/usePushNotifications";
-import { MobileNavbar } from "../Components/Mobile/MobileNavbar"; 
+import { NavbarInferior } from "../Components/Mobile/NavbarInferior"; 
 import { WhatsAppModal } from "../Components/WhatsApp/WhatsAppModal";
 import { WhatsAppStatus } from "../Components/WhatsApp/WhatsAppStatus"; 
 import { useUserPlan } from "../Hooks/Planes/useUserPlan";
 import { AppStyles } from "../Styles/AppStyles";
 import { BackgroundLayout } from "../Components/BackgroundLayout"; 
-import { Navbar } from "../Components/Navbar";
+import { NavbarSuperior } from "../Components/Mobile/NavbarSuperior";
 import { StatsGrid } from "../Components/Dashboard/StatsGrid";
 import { CloudinaryApi } from "../Helpers/Cloudinary/Cloudinary";
 
@@ -323,7 +323,7 @@ export const Home = () => {
   return (
     <BackgroundLayout>
       
-        <Navbar />
+        <NavbarSuperior />
       
       <div className="h-screen w-screen overflow-hidden relative">
         <Swiper
@@ -371,7 +371,7 @@ export const Home = () => {
         </Swiper>
 
         {!isUserExpired && (
-            <MobileNavbar activeTab={activeSlide} setActiveTab={handleMenuClick} />
+            <NavbarInferior activeTab={activeSlide} setActiveTab={handleMenuClick} />
         )}
       </div>
     </BackgroundLayout>

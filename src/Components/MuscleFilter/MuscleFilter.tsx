@@ -16,7 +16,7 @@ export const MuscleFilter = ({ selectedMuscle, onSelectMuscle }: Props) => {
             {/* Contenedor de Scroll */}
             <div 
                 ref={scrollRef}
-                className={`flex gap-4 overflow-x-auto pb-4 pt-2 px-2 snap-x justify-center ${AppStyles.customScrollbar}`}
+                className={`flex gap-4 overflow-x-auto pb-4 pt-2 px-10 scroll-px-10 snap-x ${AppStyles.customScrollbarHorizontal}`}
                 style={{ scrollbarWidth: 'thin', scrollbarColor: '#374151 #030712' }}
             >
                 {MUSCULOS_PERMITIDOS.map(musculo => {

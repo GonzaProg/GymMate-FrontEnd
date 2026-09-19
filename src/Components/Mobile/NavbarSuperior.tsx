@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNotificaciones } from "../Hooks/Notificaciones/useNotificaciones";
-import { useAuthUser } from "../Hooks/Auth/useAuthUser";
-import { useGymCachedImages } from "../Hooks/StudentsHome/useGymCachedImages";
-import { AppStyles } from "../Styles/AppStyles";
+import { useNotificaciones } from "../../Hooks/Notificaciones/useNotificaciones";
+import { useAuthUser } from "../../Hooks/Auth/useAuthUser";
+import { useGymCachedImages } from "../../Hooks/StudentsHome/useGymCachedImages";
+import { AppStyles } from "../../Styles/AppStyles";
 import { Bell, BellOff } from "lucide-react";
 
-export const Navbar = () => {
+export const NavbarSuperior = () => {
   const navigate = useNavigate();
   const { notificaciones, unreadCount, markAsRead, refresh } = useNotificaciones();
   const { currentUser } = useAuthUser();

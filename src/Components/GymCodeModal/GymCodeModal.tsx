@@ -4,6 +4,7 @@ import { Input } from "../UI/Input";
 import { Button } from "../UI/Button";
 import { AppStyles } from "../../Styles/AppStyles";
 import { LoginStyles } from "../../Styles/LoginStyles";
+import { useGymConfig } from "../../Context/GymConfigContext";
 
 interface GymCodeModalProps {
   isOpen: boolean;
@@ -12,16 +13,14 @@ interface GymCodeModalProps {
 }
 
 export const GymCodeModal = ({ isOpen, onClose, onCodeChange }: GymCodeModalProps) => {
-  const [gymCode, setGymCode] = useState("");
+  const { gymCode } = useGymConfig();
   const [tempCode, setTempCode] = useState("");
 
   useEffect(() => {
     if (isOpen) {
-      const savedCode = localStorage.getItem("GYMMATE_LOCAL_CODE");
-      setGymCode(savedCode || "");
-      setTempCode(savedCode || "");
+      setTempCode(gymCode || "");
     }
-  }, [isOpen]);
+  }, [isOpen, gymCode]);
 
   const handleSave = () => {
     if (tempCode.trim()) {
@@ -31,7 +30,7 @@ export const GymCodeModal = ({ isOpen, onClose, onCodeChange }: GymCodeModalProp
   };
 
   const handleCancel = () => {
-    setTempCode(gymCode);
+    setTempCode(gymCode || "");
     onClose();
   };
 

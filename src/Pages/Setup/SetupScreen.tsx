@@ -47,7 +47,7 @@ export const SetupScreen = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSaveConfig} className="space-y-6">
+          <div className="space-y-6" onKeyDown={(e) => { if (e.key === 'Enter') handleSaveConfig(e as any); }}>
             <div>
               <label className={AppStyles.label}>Código del Gimnasio</label>
               <Input
@@ -62,10 +62,10 @@ export const SetupScreen = () => {
 
             {error && <div className={AppStyles.errorBox}>{error}</div>}
 
-            <Button type="submit" disabled={loading} className={`${AppStyles.btnPrimary} w-full`}>
+            <Button type="button" onClick={handleSaveConfig} disabled={loading} className={`${AppStyles.btnPrimary} w-full`}>
               {loading ? "VINCULANDO..." : "VINCULAR TERMINAL"}
             </Button>
-          </form>
+          </div>
           
           <div className="mt-6 text-center">
              <p className="text-xs text-gray-500">

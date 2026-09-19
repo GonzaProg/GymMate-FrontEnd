@@ -19,6 +19,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate Environment Variables
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env.production
+
       - name: Build Web App
         run: npm run build
 
@@ -109,11 +113,8 @@ jobs:
 
           cd ios/App
           
-          # 2.8 Configurar Info.plist para evitar la molesta pregunta de encriptación de Apple
+          # 2.8 Configurar Info.plist para evitar la pregunta de encriptación de Apple
           /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" App/Info.plist || /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" App/Info.plist
-          
-          # 2.9 Auto-incrementar el Build Number usando el número de ejecución de GitHub para que Apple no rechace actualizaciones
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" App/Info.plist || true
           
           # 3. Compilar el Archivo (.xcarchive) forzando la firma manual con nuestros datos
           xcodebuild -project App.xcodeproj \
@@ -127,7 +128,8 @@ jobs:
                      PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
                      CODE_SIGN_IDENTITY="Apple Distribution" \
                      CODE_SIGN_ENTITLEMENTS=$RUNNER_TEMP/App.entitlements \
-                     PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE_ID
+                     PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE_ID \
+                     CURRENT_PROJECT_VERSION=${{ github.run_number }}
 
           # 4. Exportar a .IPA usando nuestro ExportOptions generado
           xcodebuild -exportArchive \

@@ -34,11 +34,13 @@ export const StudentDietas = () => {
 
     return (
         <div className="min-h-screen bg-gray-900 pb-24 text-white">
-            <div className="sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-lg border-b border-white/10 px-4 py-4 flex items-center gap-3">
-                <button onClick={() => navigate('/home')} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                    <ArrowLeft className="w-6 h-6" />
-                </button>
-                <h1 className="text-xl font-bold">Mi Nutrición</h1>
+            <div className="sticky top-0 z-20 bg-[#121212]/90 backdrop-blur-lg border-b border-white/10 pt-safe">
+                <div className="px-4 py-4 flex items-center gap-3">
+                    <button onClick={() => navigate('/home')} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                        <ArrowLeft className="w-6 h-6" />
+                    </button>
+                    <h1 className="text-xl font-bold">Mi Nutrición</h1>
+                </div>
             </div>
 
             <div className="flex gap-2 p-4 overflow-x-auto scrollbar-none border-b border-white/5">

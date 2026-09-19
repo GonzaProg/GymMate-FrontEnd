@@ -85,6 +85,12 @@ export const UsuarioApi = {
         return response.data;
     },
 
+    // Eliminar Cuenta
+    deleteAccount: async (id: number) => {
+        const response = await api.delete(`/users/${id}`);
+        return response.data;
+    },
+
     // Guardar FCM Token
     saveFcmToken: async (token: string) => {
         const response = await api.post(`/users/fcm-token`, { token });
