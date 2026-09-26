@@ -14,6 +14,7 @@ export const useRenewPlan = () => {
     const [loadingPlans, setLoadingPlans] = useState(false);
     const [loadingAction, setLoadingAction] = useState(false); 
     const [metodoPago, setMetodoPago] = useState("Transferencia");
+    const [fechaInicio, setFechaInicio] = useState("");
 
     // --- BÚSQUEDA CENTRALIZADA ---
     // includePlan: true porque necesitamos saber si está activo o vencido
@@ -49,6 +50,7 @@ export const useRenewPlan = () => {
     const seleccionarAlumno = (alumno: any) => {
         handleSelectAlumno(alumno);
         setMetodoPago("Transferencia");
+        setFechaInicio("");
     };
 
     const limpiarSeleccion = () => {
@@ -89,7 +91,7 @@ export const useRenewPlan = () => {
 
         setLoadingAction(true);
         try {
-            const response: any = await PlansApi.renewPlan(idRenovar, metodoPago, forzarDesdeVencimiento);
+            const response: any = await PlansApi.renewPlan(idRenovar, metodoPago, forzarDesdeVencimiento, fechaInicio);
 
             switch (response.estadoRecibo) {
                 case 'ENVIADO': showSuccess(`✅ Renovado. Recibo enviado 📱`); break;
@@ -143,7 +145,7 @@ export const useRenewPlan = () => {
 
         setLoadingAction(true);
         try {
-            const response: any = await PlansApi.subscribeUser(alumnoSeleccionado.id, plan.id!, metodoPago);
+            const response: any = await PlansApi.subscribeUser(alumnoSeleccionado.id, plan.id!, metodoPago, fechaInicio);
             
             switch (response.estadoRecibo) {
                 case 'ENVIADO': showSuccess(`✅ Asignado. Recibo enviado 📱`); break;
@@ -169,6 +171,7 @@ export const useRenewPlan = () => {
         loading: loadingPlans || loadingSearch, // Loading combinado
         loadingAction,
         metodoPago,
+        fechaInicio,
         
         // Acciones
         setBusqueda, // Para el input
@@ -178,6 +181,7 @@ export const useRenewPlan = () => {
         renovarPlan,
         cancelarPlan,
         asignarPlan,
-        setMetodoPago
+        setMetodoPago,
+        setFechaInicio
     };
 };

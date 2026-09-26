@@ -2,6 +2,7 @@ import { useRenewPlan } from "../../Hooks/Planes/useRenewPlan";
 import { AppStyles } from "../../Styles/AppStyles";
 import { RenewPlanStyles } from "../../Styles/RenewPlanStyles";
 import { PaymentMethodSelect } from "../../Components/UI/PaymentMethodSelect";
+import { Input } from "../../Components/UI/Input";
 import { Search, ClipboardList, RefreshCcw, X, Plus, Hourglass, FileText } from "lucide-react";
 import { useState } from "react";
 import { UserPaymentHistory } from "./UserPaymentHistory";
@@ -16,6 +17,8 @@ export const RenewPlan = () => {
     loadingAction,
     metodoPago,      
     setMetodoPago,   
+    fechaInicio,
+    setFechaInicio,
     setBusqueda,
     seleccionarAlumno: originalSeleccionarAlumno,
     limpiarSeleccion: originalLimpiarSeleccion,
@@ -38,9 +41,38 @@ export const RenewPlan = () => {
     ?.filter((p: any) => !p.activo && p.plan?.nombre !== "Plan de Prueba")
     ?.sort((a: any, b: any) => new Date(b.fechaVencimiento).getTime() - new Date(a.fechaVencimiento).getTime())[0];
 
+  const getPreviewDates = (duracionDias: number, vencimientoActual?: string) => {
+    if (fechaInicio) {
+      const parts = fechaInicio.split("-");
+      const inicio = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      const fin = new Date(inicio);
+      fin.setDate(fin.getDate() + duracionDias);
+      return { inicio: inicio.toLocaleDateString(), fin: fin.toLocaleDateString() };
+    }
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
+    let inicio = new Date();
+    let fin = new Date();
+    
+    if (vencimientoActual) {
+      const venc = new Date(vencimientoActual);
+      venc.setHours(0, 0, 0, 0);
+      if (venc >= hoy) {
+        inicio = new Date(venc);
+        fin = new Date(venc);
+        fin.setDate(fin.getDate() + duracionDias);
+        return { inicio: inicio.toLocaleDateString(), fin: fin.toLocaleDateString() };
+      }
+    }
+    
+    fin.setDate(fin.getDate() + duracionDias);
+    return { inicio: inicio.toLocaleDateString(), fin: fin.toLocaleDateString() };
+  };
+
   return (
     <div className={AppStyles.principalContainer}>
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           
           {/* HEADER */}
           <div className={AppStyles.headerContainer + " mb-8"}>
@@ -145,7 +177,7 @@ export const RenewPlan = () => {
                   {alumnoSeleccionado.userPlans && alumnoSeleccionado.userPlans.some((p: any) => p.activo) ? (
                       <div className="grid grid-cols-1 gap-4">
                           {alumnoSeleccionado.userPlans.filter((p: any) => p.activo).map((sus: any, index: number) => (
-                              <div key={sus.id} className="bg-gray-800/50 border border-white/10 rounded-xl p-4 flex flex-col lg:flex-row justify-between items-center gap-4 hover:border-white/20 transition-all relative" style={{ zIndex: 50 - index }}>
+                              <div key={sus.id} className="bg-gray-800/50 border border-white/10 rounded-xl p-4 flex flex-col xl:flex-row justify-between items-center gap-4 hover:border-white/20 transition-all relative" style={{ zIndex: 50 - index }}>
                                   
                                   {/* Info Plan */}
                                   <div className="flex-1 text-left w-full">
@@ -159,7 +191,7 @@ export const RenewPlan = () => {
                                           Vence: <span className="text-white font-mono">{new Date(sus.fechaVencimiento).toLocaleDateString()}</span>
                                       </p>
 
-                                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-gray-300 mb-3 bg-black/20 p-3 rounded-lg border border-white/5 w-full max-w-lg">
+                                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-gray-300 mb-3 bg-black/20 p-3 rounded-lg border border-white/5 w-full max-w-xl">
                                         <div className="flex flex-col">
                                             <span className="text-gray-500 font-bold mb-0.5">Precio</span>
                                             <span className="text-green-400 font-mono font-bold">${sus.plan.precio}</span>
@@ -182,30 +214,50 @@ export const RenewPlan = () => {
                                   </div>
 
                                   {/* Botones de Acción Individuales */}
-                                  <div className="flex items-center gap-3 w-full lg:w-auto">
-                                      <div className="w-full lg:w-48">
-                                          <PaymentMethodSelect 
-                                              value={metodoPago} 
-                                              onChange={setMetodoPago}
-                                              className="mb-0" // Quitar margen bottom
-                                          />
+                                  <div className="flex flex-col gap-2 w-full xl:w-auto xl:items-end">
+                                      <div className="flex flex-col xl:flex-row items-end gap-3 w-full xl:w-auto">
+                                          <div className="w-full xl:w-48">
+                                              <label className="text-gray-400 text-xs mb-1 block">Fecha Inicio (Opcional):</label>
+                                              <Input 
+                                                  type="date"
+                                                  value={fechaInicio}
+                                                  onChange={(e: any) => setFechaInicio(e.target.value)}
+                                                  className={`${AppStyles.inputDark} h-[46px] py-1 mb-0 mt-0`}
+                                              />
+                                          </div>
+                                          <div className="w-full xl:w-48">
+                                              <PaymentMethodSelect 
+                                                  value={metodoPago} 
+                                                  onChange={setMetodoPago}
+                                                  className="mb-0"
+                                              />
+                                          </div>
+                                          <div className="flex gap-2 w-full xl:w-auto">
+                                              <button 
+                                                  onClick={() => renovarPlan()} 
+                                                  disabled={loadingAction}
+                                                  className="flex-1 xl:flex-none bg-green-600 hover:bg-green-500 text-white p-2 rounded-lg transition shadow-lg disabled:opacity-50 h-[46px] px-4"
+                                                  title="Renovar este plan"
+                                              >
+                                                  {loadingAction ? '...' : <span className="flex items-center justify-center gap-2"><RefreshCcw className="w-4 h-4" /> Renovar</span>}
+                                              </button>
+                                              <button 
+                                                  onClick={() => cancelarPlan()}
+                                                  disabled={loadingAction}
+                                                  className="flex-1 xl:flex-none bg-red-900/50 hover:bg-red-600 text-white p-2 rounded-lg transition border border-red-800/50 disabled:opacity-50 h-[46px] px-4"
+                                                  title="Cancelar este plan"
+                                              >
+                                                  {loadingAction ? '...' : <span className="flex items-center justify-center gap-2"><X className="w-4 h-4" /> Cancelar</span>}
+                                              </button>
+                                          </div>
                                       </div>
-                                      <button 
-                                          onClick={() => renovarPlan()} 
-                                          disabled={loadingAction}
-                                          className="bg-green-600 hover:bg-green-500 text-white p-2 rounded-lg transition shadow-lg disabled:opacity-50"
-                                          title="Renovar este plan"
-                                      >
-                                          {loadingAction ? '...' : <span className="flex items-center justify-center gap-2"><RefreshCcw className="w-4 h-4" /> Renovar</span>}
-                                      </button>
-                                      <button 
-                                          onClick={() => cancelarPlan()}
-                                          disabled={loadingAction}
-                                          className="bg-red-900/50 hover:bg-red-600 text-white p-2 rounded-lg transition border border-red-800/50 disabled:opacity-50"
-                                          title="Cancelar este plan"
-                                      >
-                                          {loadingAction ? '...' : <span className="flex items-center justify-center gap-2"><X className="w-4 h-4" /> Cancelar</span>}
-                                      </button>
+                                      <div className="text-xs text-gray-400 bg-black/20 px-3 py-1.5 rounded-lg border border-white/5 w-full text-center">
+                                          {(() => {
+                                              const duracion = (sus.plan as any).duracionDias || planesDisponibles.find(p => p.id === sus.plan.id)?.duracionDias;
+                                              const preview = getPreviewDates(duracion, sus.fechaVencimiento);
+                                              return <span>Nueva vigencia: <b className="text-white">{preview.inicio}</b> al <b className="text-green-400">{preview.fin}</b></span>;
+                                          })()}
+                                      </div>
                                   </div>
                               </div>
                           ))}
@@ -217,7 +269,7 @@ export const RenewPlan = () => {
                           </p>
                           
                           {ultimoPlan && (
-                              <div className="w-full max-w-lg bg-gray-800/80 border border-white/10 rounded-xl p-5 mt-2 flex flex-col gap-4">
+                              <div className="w-full max-w-2xl bg-gray-800/80 border border-white/10 rounded-xl p-5 mt-2 flex flex-col gap-4">
                                   <h4 className="text-white font-semibold text-md">¿Quiere renovar su último plan registrado?</h4>
                                   
                                   <div className="flex flex-col text-left bg-black/30 p-4 rounded-lg">
@@ -237,22 +289,40 @@ export const RenewPlan = () => {
                                       </div>
                                   </div>
 
-                                  <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
-                                      <div className="w-full sm:flex-1">
-                                          <PaymentMethodSelect 
-                                              value={metodoPago} 
-                                              onChange={setMetodoPago}
-                                              className="mb-0"
-                                          />
+                                  <div className="flex flex-col gap-2 w-full mt-2">
+                                      <div className="flex flex-col sm:flex-row items-end gap-3 w-full">
+                                          <div className="w-full sm:flex-1">
+                                              <label className="text-gray-400 text-xs mb-1 block">Fecha Inicio (Opcional):</label>
+                                              <Input 
+                                                  type="date"
+                                                  value={fechaInicio}
+                                                  onChange={(e: any) => setFechaInicio(e.target.value)}
+                                                  className={`${AppStyles.inputDark} h-[46px] py-1 mb-0 mt-0`}
+                                              />
+                                          </div>
+                                          <div className="w-full sm:flex-1">
+                                              <PaymentMethodSelect 
+                                                  value={metodoPago} 
+                                                  onChange={setMetodoPago}
+                                                  className="mb-0"
+                                              />
+                                          </div>
+                                          <button 
+                                              onClick={() => renovarPlan(ultimoPlan.id, false)} 
+                                              disabled={loadingAction}
+                                              className="bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded-lg transition shadow-lg disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto h-[46px]"
+                                              title="Renovar desde Hoy"
+                                          >
+                                              {loadingAction ? '...' : <><RefreshCcw className="w-6 h-4" /> Renovar</>}
+                                          </button>
                                       </div>
-                                      <button 
-                                          onClick={() => renovarPlan(ultimoPlan.id, false)} 
-                                          disabled={loadingAction}
-                                          className="bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded-lg transition shadow-lg disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
-                                          title="Renovar desde Hoy"
-                                      >
-                                          {loadingAction ? '...' : <><RefreshCcw className="w-4 h-4" /> Renovar desde Hoy</>}
-                                      </button>
+                                      <div className="text-xs text-gray-400 bg-black/30 px-3 py-2 rounded-lg border border-white/5 text-center mt-1">
+                                          {(() => {
+                                              const duracion = (ultimoPlan.plan as any).duracionDias || planesDisponibles.find(p => p.id === ultimoPlan.plan.id)?.duracionDias || 30;
+                                              const preview = getPreviewDates(duracion);
+                                              return <span>Nueva vigencia: <b className="text-white">{preview.inicio}</b> al <b className="text-green-400">{preview.fin}</b></span>;
+                                          })()}
+                                      </div>
                                   </div>
                               </div>
                           )}
@@ -263,11 +333,26 @@ export const RenewPlan = () => {
               {/* SECCIÓN AGREGAR NUEVO PLAN - SOLO SI NO TIENE PLANES ACTIVOS */}
               {!alumnoSeleccionado.userPlans || !alumnoSeleccionado.userPlans.some((p: any) => p.activo) && (
               <div className="border-t border-white/10 pt-6">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 gap-4">
                       <h3 className="text-white font-bold text-lg flex items-center gap-2"><Plus className="w-5 h-5 text-green-400" /> Asignar Nuevo Plan</h3>
-                      <div className="w-full md:w-64">
-                          <label className="text-gray-400 text-xs mb-1 block">Método de Pago para Alta:</label>
-                          <PaymentMethodSelect value={metodoPago} onChange={setMetodoPago} />
+                      <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                          <div className="w-full sm:w-48">
+                              <label className="text-gray-400 text-xs mb-1 block">Fecha Inicio (Opcional):</label>
+                              <Input 
+                                  type="date"
+                                  value={fechaInicio}
+                                  onChange={(e: any) => setFechaInicio(e.target.value)}
+                                  className={`${AppStyles.inputDark} h-[46px] py-1 mb-0 mt-0`}
+                              />
+                          </div>
+                          <div className="w-full sm:w-48">
+                              <PaymentMethodSelect 
+                                  value={metodoPago} 
+                                  onChange={setMetodoPago} 
+                                  className="mb-0" 
+                                  label="MÉTODO DE PAGO PARA ALTA:" 
+                              />
+                          </div>
                       </div>
                   </div>
 
