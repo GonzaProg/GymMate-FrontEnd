@@ -2,22 +2,23 @@ import api from '../axios';
 
 // DTO para crear usuario (Ahora incluye codigoGym opcional para enviarlo desde el front)
 export interface CreateUserDTO {
-    dni: string;          
+    dni: string;
     nombre: string;
     apellido: string;
     contraseña: string;
-    telefono?: string;    
+    telefono?: string;
     gmail?: string;
     fechaNacimiento?: string;
     rol: string;
     codigoGym?: string; // Para vincular el usuario al gym local
+    esCreacionAdmin?: boolean; // Para enviar mensaje con datos de la cuenta por whatsapp
 }
 
 // DTO para el Login (Ahora incluye codigoGym)
 export interface LoginDTO {
-    dni: string;      
+    dni: string;
     contraseña: string;
-    codigoGym?: string; 
+    codigoGym?: string;
 }
 
 // Interfaz de respuesta del login (Actualizada con datos del Gym)
@@ -26,7 +27,7 @@ export interface LoginResponse {
     refreshToken: string;
     user: {
         id: number;
-        dni: string;    
+        dni: string;
         nombre: string;
         apellido: string;
         rol: string;
