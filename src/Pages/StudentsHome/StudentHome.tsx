@@ -11,8 +11,8 @@ import { useGymCachedImages } from "../../Hooks/StudentsHome/useGymCachedImages"
 import { useStudentDietas } from "../../Hooks/Dietas/useStudentDietas";
 import { useNavigate } from "react-router-dom";
 import { MercadoPagoApi } from "../../API/Pagos/MercadoPagoApi";
-import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { AppLauncher } from '@capacitor/app-launcher';
 import { App as CapacitorApp } from '@capacitor/app';
 import { showError } from "../../Helpers/Alerts";
 import MpLogo from "../../assets/MP_RGB_HANDSHAKE_color_horizontal.svg";
@@ -93,8 +93,9 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
             const { init_point } = await MercadoPagoApi.renovarPlan(userPlanId, Capacitor.isNativePlatform());
             if (init_point) {
                 if (Capacitor.isNativePlatform()) {
-                    // Abrir en Chrome Custom Tabs permite que Android detecte si la app de MP está instalada y la abra
-                    await Browser.open({ url: init_point });
+                    // Usamos AppLauncher.openUrl para forzar a que Android maneje el intent
+                    // y abra la app nativa de Mercado Pago si está instalada.
+                    await AppLauncher.openUrl({ url: init_point });
                 } else {
                     window.location.href = init_point;
                 }
@@ -112,18 +113,15 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
     useEffect(() => {
         if (!Capacitor.isNativePlatform()) return;
 
-        const urlListener = CapacitorApp.addListener('appUrlOpen', (data) => {
+        const urlListener = CapacitorApp.addListener('appUrlOpen', (data: any) => {
             if (data.url.includes("gymmate://payment")) {
-                // Cerramos el Chrome Custom Tab que abrió MP
-                Browser.close().catch(console.error);
-                
                 // Recargamos el plan para reflejar el pago exitoso
                 fetchMyPlans();
             }
         });
 
         return () => {
-            urlListener.then(listener => listener.remove());
+            urlListener.then((listener: any) => listener.remove());
         };
     }, []);
 

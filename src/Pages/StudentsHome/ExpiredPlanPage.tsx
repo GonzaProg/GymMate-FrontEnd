@@ -3,6 +3,8 @@ import { CloudinaryApi } from "../../Helpers/Cloudinary/Cloudinary";
 import { MercadoPagoApi } from "../../API/Pagos/MercadoPagoApi";
 import { showError } from "../../Helpers/Alerts";
 import MpLogo from "../../assets/MP_RGB_HANDSHAKE_color_horizontal.svg";
+import { AppLauncher } from '@capacitor/app-launcher';
+import { Capacitor } from '@capacitor/core';
 import { useGymCachedImages } from "../../Hooks/StudentsHome/useGymCachedImages";
 import { LogOut } from "lucide-react";
 import { useOptimizedHome } from "../../Hooks/Home/useOptimizedHome";
@@ -46,7 +48,11 @@ export const ExpiredPlanPage = ({ currentUser, expiredPlan }: ExpiredPlanPagePro
             }
             const { init_point } = await MercadoPagoApi.renovarPlan(expiredPlan.userPlanId);
             if (init_point) {
-                window.location.href = init_point;
+                if (Capacitor.isNativePlatform()) {
+                    await AppLauncher.openUrl({ url: init_point });
+                } else {
+                    window.location.href = init_point;
+                }
             }
         } catch (err: any) {
             console.error(err);
