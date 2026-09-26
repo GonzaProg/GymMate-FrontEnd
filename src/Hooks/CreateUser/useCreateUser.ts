@@ -57,7 +57,8 @@ export const useCreateUser = () => {
       // INYECTAR EL CÓDIGO DEL GIMNASIO AL CREAR
       const dataToSend: any = {
         ...formData,
-        codigoGym: gymCode || undefined
+        codigoGym: gymCode || undefined,
+        esCreacionAdmin: true
       };
 
       // No enviar fechaNacimiento si está vacío
