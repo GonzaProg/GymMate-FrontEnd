@@ -1,7 +1,5 @@
 import { type DashboardMetrics } from "../../API/Dashboard/DashboardApi";
 import { Users, FileText, Dumbbell, TrendingUp } from "lucide-react";
-import TelarañaHome3 from "../../assets/Halloween/TelarañaHome3.svg";
-import TelarañaHome4 from "../../assets/Halloween/TelarañaHome4.svg";
 
 interface Props {
     metrics: DashboardMetrics;
@@ -59,10 +57,6 @@ export const StatsGrid = ({ metrics, userRole }: Props) => {
 // Subcomponente de Tarjeta con diseño Glassmorphism + Gradiente
 const StatCard = ({ title, value, icon, color, total }: any) => (
     <div className="relative group overflow-hidden rounded-2xl p-6 bg-gray-900/60 border border-white/5 backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:border-white/10">
-        
-        <img src={TelarañaHome4} alt="Telaraña4" className="absolute -top-2 -left-2 w-20 h-20 z-10" />
-        <img src={TelarañaHome3} alt="Telaraña3" className="absolute -bottom-1 -right-2 w-20 h-20 z-10" />
-
 
         {/* Fondo Gradiente Sutil */}
         <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-5 group-hover:opacity-10 transition-opacity`}></div>

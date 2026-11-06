@@ -6,12 +6,7 @@ import { Button } from "../../Components/UI/Button";
 import { AppStyles } from "../../Styles/AppStyles"; 
 import { ProfileStyles } from "../../Styles/ProfileStyles"; 
 import { formatearFechaUTC } from "../../Helpers/DateUtils";
-import { Camera, Edit2, Lock, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
-import PerfilHalloween from "../../assets/Halloween/PerfilHalloween.jpg";
-import Telaraña3 from "../../assets/Halloween/Telaraña3.svg";
-import TelarañaConAraña1 from "../../assets/Halloween/TelarañaConAraña1.png";
-import TelarañaConAraña2 from "../../assets/Halloween/TelarañaConAraña2.png";
-import CerrarSesion from "../../assets/Halloween/CerrarSesion.svg";
+import { Camera, Edit2, Lock, AlertTriangle, ChevronDown, ChevronUp, LogOut } from "lucide-react";
 
 interface ProfileProps {
   isMobile?: boolean; // Prop para diferenciar el contexto
@@ -61,16 +56,10 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
           {/* --- CARD PERFIL --- */}
           <div className="w-full backdrop-blur-xl bg-gray-900/10 border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
             
-            {/* Fondo de Perfil (Halloween) */}
-            <div 
-              className={`${ProfileStyles.coverGradient}`}
-              style={{ backgroundImage: `url(${PerfilHalloween})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            >
-              {/* Overlay para oscurecer un poco la imagen y que el avatar/texto destaque */}
-              <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0,0,0,0.1)' }}></div>
-            </div>
+            {/* Fondo de Perfil */}
+            <div className={ProfileStyles.coverGradient}></div>
 
-            <div className="px-6 md:px-10 pb-10 relative z-10">
+            <div className="px-6 md:px-10 pb-10">
               <div className={ProfileStyles.avatarContainer}>
                 <div className={ProfileStyles.avatarWrapper}>
                   {avatarSrc ? (
@@ -216,9 +205,8 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
             </div>
           </div>
 
-          {/* --- CARD SEGURIDAD --- */}
+          {/* CARD SEGURIDAD */}
           <div className={AppStyles.glassCard + " p-6 md:p-8 bg-gray-900/10 relative overflow-hidden"}>
-            <img src={TelarañaConAraña2} alt="" className="absolute -top-4 -right-2 w-24 h-24 opacity-80 pointer-events-none" />
             {!showPasswordSection ? (
               <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                   <div className="flex flex-col md:flex-row items-center gap-4">
@@ -255,7 +243,6 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
           {/* --- CARD ZONA DE PELIGRO (SOLO ALUMNO) --- */}
           {userData.rol === 'Alumno' && (
             <div className={AppStyles.glassCard + " p-6 md:p-8 bg-red-900/10 border-red-500/20 relative overflow-hidden"}>
-                <img src={TelarañaConAraña1} alt="" className="absolute top-5 -left-8 w-24 h-24 opacity-70 pointer-events-none transform -scale-x-100" />
                 <div 
                   className="flex justify-between items-center cursor-pointer select-none"
                   onClick={() => setShowDangerZone(!showDangerZone)}
@@ -291,11 +278,10 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
 
           {/* --- CARD CERRAR SESIÓN (SOLO MOBILE/ALUMNO) --- */}
           {isMobile && (
-            <div className={AppStyles.glassCard + " p-8 bg-gray-900/10 relative overflow-hidden"}>                
-                <img src={Telaraña3} alt="" className="absolute -top-5 -left-1 w-16 h-16 opacity-80 pointer-events-none" />
-                <div className="flex justify-between items-center relative z-10">
+            <div className={AppStyles.glassCard + " p-8 bg-gray-900/10"}>                
+                <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
-                      <div className="bg-red-900/30 p-2 rounded-lg flex items-center justify-center w-12 h-12"><img src={CerrarSesion} className="w-8 h-8 object-contain" alt="Cerrar Sesión" /></div>
+                      <div className="bg-red-900/30 p-2 rounded-lg"><LogOut className="w-7 h-7 text-red-500" /></div>
                       <span className="font-bold text-gray-100 text-base block">Cerrar Sesión</span>
                     </div>
                     <button 

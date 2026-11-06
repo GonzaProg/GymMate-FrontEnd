@@ -1,6 +1,4 @@
 import { Dumbbell, Medal, User } from "lucide-react";
-import CalabazaNavbarInferior from "../../assets/Halloween/CalabazaNavbarInferior.svg";
-import ArañaNavbarInferior from "../../assets/Halloween/ArañaNavbarInferior.svg";
 
 interface NavbarInferiorProps {
   activeTab: number;
@@ -16,11 +14,7 @@ export const NavbarInferior = ({ activeTab, setActiveTab }: NavbarInferiorProps)
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-black/95 backdrop-blur-md border-t border-orange-500/20 px-6 z-50 flex justify-around items-center pt-2 pb-safe min-h-[5rem] shadow-[0_-5px_15px_-5px_rgba(249,115,22,0.1)] overflow-hidden">
-      {/* Calabazas asomándose por las esquinas inferiores (absolutas) */}
-      <img src={CalabazaNavbarInferior} alt="Calabaza Izquierda" className="absolute -bottom-6 -left-6 w-20 h-20 opacity-80 -rotate-12 pointer-events-none" />
-      <img src={CalabazaNavbarInferior} alt="Calabaza Derecha" className="absolute -bottom-6 -right-6 w-20 h-20 opacity-80 rotate-12 pointer-events-none" />
-
+    <div className="fixed bottom-0 left-0 w-full bg-gray-900/95 backdrop-blur-md border-t border-white/10 px-6 z-50 flex justify-around items-center pt-2 pb-safe min-h-[5rem] shadow-2xl">
       {navItems.map((item) => {
         const isActive = activeTab === item.index;
         const IconComponent = item.Icon;
@@ -30,7 +24,7 @@ export const NavbarInferior = ({ activeTab, setActiveTab }: NavbarInferiorProps)
             key={item.index}
             onClick={() => setActiveTab(item.index)}
             className={`flex flex-col items-center gap-1 transition-all duration-300 relative pb-2 ${
-              isActive ? "text-orange-500 scale-110" : "text-gray-500 hover:text-orange-300"
+              isActive ? "text-white scale-110" : "text-gray-500 hover:text-gray-300"
             }`}
           >
             {/* Contenedor del icono con animación de rebote al activar */}
@@ -38,19 +32,13 @@ export const NavbarInferior = ({ activeTab, setActiveTab }: NavbarInferiorProps)
               <IconComponent isActive={isActive} />
             </div>
             
-            <span className={`text-[10px] font-bold tracking-wide uppercase transition-colors ${isActive ? "text-orange-500" : "text-gray-500"}`}>
+            <span className={`text-[10px] font-bold tracking-wide uppercase transition-colors ${isActive ? "text-white" : "text-gray-500"}`}>
               {item.label}
             </span>
 
-            {/* Araña indicadora naranja asomándose (mitad superior) */}
+            {/* Puntito indicador verde */}
             {isActive && (
-              <div className="absolute -bottom-1 w-6 h-3 overflow-hidden flex justify-center transition-all duration-300">
-                <img 
-                  src={ArañaNavbarInferior} 
-                  alt="Activo" 
-                  className="w-4 h-4 max-w-none object-top drop-shadow-[0_0_5px_rgba(249,115,22,0.8)]" 
-                />
-              </div>
+                <span className="absolute -bottom-1 w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e] transition-all duration-300" />
             )}
           </button>
         );

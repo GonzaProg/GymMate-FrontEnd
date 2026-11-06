@@ -6,8 +6,6 @@ import { usePersonalRecords } from "../../Hooks/PersonalRecords/usePersonalRecor
 import { VideoEjercicio } from "../../Components/VideoEjercicios/VideoEjercicio"; 
 import { CustomSelect } from "../../Components/UI/CustomSelect";
 import { Info, ChevronDown, Trophy, Pencil, Plus, Search, Video, Play, Dumbbell, ArrowUp, ArrowDown, Trash2, X } from "lucide-react";
-import TelarañaConAraña5 from "../../assets/Halloween/TelarañaConAraña5.png";
-import TelarañaCompleta from "../../assets/Halloween/TelarañaCompleta.svg";
 
 export const MyPersonalRecords = () => {
     const {
@@ -33,8 +31,7 @@ export const MyPersonalRecords = () => {
         <div className="mt-6 p-2 animate-fade-in pb-24 space-y-6 max-w-lg mx-auto relative">
             
             {/* ACORDEÓN DE INFORMACIÓN */}
-            <div className={AppStyles.glassCard.replace("p-8", "p-2") + " relative overflow-hidden"}>
-                <img src={TelarañaConAraña5} alt="" className="absolute -top-3 -left-5 w-20 h-20 opacity-80 pointer-events-none" />
+            <div className={AppStyles.glassCard.replace("p-8", "p-2")}>
                 <button 
                     onClick={() => setIsInfoOpen(!isInfoOpen)}
                     className="w-full p-2 flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
@@ -64,8 +61,7 @@ export const MyPersonalRecords = () => {
             </div>
 
             {/* FORMULARIO DE CARGA (DESPLEGABLE) */}
-            <div className={`${AppStyles.glassCard} p-0 overflow-hidden relative`}>
-                <img src={TelarañaCompleta} alt="" className="absolute -top-5 -right-5 w-24 h-24 opacity-70 pointer-events-none" />
+            <div className={`${AppStyles.glassCard} p-0 overflow-visible`}>
                 
                 <button 
                     onClick={() => {

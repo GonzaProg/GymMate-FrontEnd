@@ -13,10 +13,6 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 
 import { createPortal } from "react-dom";
 import { Inbox, CloudDownload, CheckCircle, Download, Search, Dumbbell, ArrowLeft, Play, Activity, Hand, Info, Calendar, Edit2, Save, X } from "lucide-react";
-import FondoRutinasHalloween from "../../assets/Halloween/FondoRutinasHalloween.jpg";
-import CalabazaSinDulces from "../../assets/Halloween/CalabazaSinDulces.png";
-import CalabazaLlenaDulces from "../../assets/Halloween/CalabazaLlenaDulces.png";
-import CalabazaDiasRutina from "../../assets/Halloween/CalabazaDiasRutina.svg";
 
 // Componente para renderizar miniaturas offline desde IndexedDB
 const OfflineThumbnail = ({ path, alt }: { path: string; alt: string }) => {
@@ -479,7 +475,7 @@ export const MyRoutines = () => {
       <div className="mt-20 w-full min-h-full flex flex-col pt-safe animate-fade-in-up">
         {/* ENCABEZADO FIJO */}
         <div className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-xl border-b border-white/10 px-4 py-4 shrink-0 shadow-lg mt-0">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-orange-900"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-900"></div>
             <div className="flex items-center gap-4 mt-2 mb-2">
                 <button 
                   onClick={() => { closeModal(); setIsRoutineEditMode(false); setEditValues({}); }} 
@@ -517,11 +513,11 @@ export const MyRoutines = () => {
                             onClick={() => setSelectedDayIndex(index)}
                             className={`flex shrink-0 items-center gap-1.5 px-5 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                                 selectedDayIndex === index 
-                                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/50 shadow-[0_0_10px_rgba(249,115,22,0.15)]' 
+                                    ? 'bg-green-500/20 text-green-400 border border-green-500/50 shadow-[0_0_10px_rgba(34,197,94,0.15)]' 
                                     : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
                             }`}
                         >
-                            <img src={CalabazaDiasRutina} alt="Día" className="mr-1 w-5 h-5 object-contain drop-shadow-[0_0_5px_rgba(249,115,22,0.5)]" />
+                            <Calendar className="w-3.5 h-3.5" />
                             Día {index + 1}
                         </button>
                     ))}
@@ -604,7 +600,7 @@ export const MyRoutines = () => {
                       <div className="flex-1 flex flex-col justify-between w-full">
                           <div className="flex justify-between items-start mb-4">
                               <div className="flex flex-col gap-1 w-full mr-2">
-                                  <div className="mt-4 flex items-center gap-3">
+                                  <div className="flex items-center gap-3">
                                       <span className={`${isSuperserie ? 'bg-red-900/50 text-red-400 border-red-500/20' : 'bg-green-900/50 text-green-400 border-green-500/20'} text-xs font-bold px-2 py-1 rounded border`}>#{i + 1}</span>
                                       <h4 className={`font-bold text-lg md:text-xl transition-colors ${isChecked ? 'text-gray-500 line-through' : isSuperserie ? 'text-red-400' : 'text-white'}`}>{d.ejercicio.nombre}</h4>
                                   </div>
@@ -631,20 +627,20 @@ export const MyRoutines = () => {
                                   {!editValues[d.id] && !isRoutineEditMode && (
                                       <button 
                                           onClick={() => toggleExerciseCheck(routineIdForCheck, d.ejercicio.id, i)}
-                                          className="w-12 h-12 flex items-center justify-center transition-all flex-shrink-0 ml-2 hover:scale-110 active:scale-95"
-                                      >
-                                          {isChecked ? (
-                                              <img src={CalabazaLlenaDulces} alt="Completado" className="mt-6 w-18 h-18 md:w-12 md:h-12 object-contain drop-shadow-[0_0_8px_rgba(255,153,0,0.6)]" />
-                                          ) : (
-                                              <img src={CalabazaSinDulces} alt="Pendiente" className="mt-6 w-18 h-18 md:w-12 md:h-12 object-contain opacity-40 grayscale-[0.8] contrast-75 hover:grayscale-0 hover:opacity-100 transition-all" />
-                                          )}
+                                          className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ml-2 ${
+                                              isChecked 
+                                              ? 'bg-green-500 border-green-400 text-black shadow-[0_0_15px_rgba(34,197,94,0.4)]' 
+                                              : 'bg-black/40 border-white/20 text-transparent hover:border-green-500/50 hover:bg-white/5 backdrop-blur-sm'
+                                          }`}                                      >
+                                          
+                                          <span className="text-xl leading-none font-bold select-none">{isChecked ? '✓' : ''}</span>
                                       </button>
                                   )}
                               </div>
                           </div>
                           
                           {/* GRID DE DATOS / INPUTS */}
-                          <div className="flex flex-col gap-3 w-full mt-6">
+                          <div className="flex flex-col gap-3 w-full">
                               <div className="grid grid-cols-3 gap-2">
                                   {editValues[d.id] ? (
                                       <>
@@ -796,14 +792,10 @@ export const MyRoutines = () => {
                     <div 
                         key={key} 
                         onClick={() => setSelectedRoutine(rutina)} 
-                        className={MyRoutinesStyles.routineCard + " relative overflow-hidden"}
+                        className={MyRoutinesStyles.routineCard + " relative"}
                     >
-                        {/* FONDO HALLOWEEN INDIVIDUAL */}
-                        <div 
-                          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none"
-                          style={{ backgroundImage: `url(${FondoRutinasHalloween})` }}
-                        />
-                        <div className="relative z-10 h-full flex flex-col">
+                    
+                    <div className={AppStyles.gradientDivider}></div>
 
                       {/* BOTONES SUPERIORES (Edición y Descarga) */}
                       <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
@@ -894,7 +886,6 @@ export const MyRoutines = () => {
                           <span className={MyRoutinesStyles.viewDetailBtn}>
                             VER DETALLE <Search className="w-5 h-5 inline-block ml-1" />
                           </span>
-                      </div>
                       </div>
                     </div>
                 );

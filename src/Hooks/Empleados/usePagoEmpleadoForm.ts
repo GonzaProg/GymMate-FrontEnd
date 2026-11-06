@@ -35,7 +35,7 @@ export const usePagoEmpleadoForm = (
                 monto: Number(monto),
                 concepto,
                 metodoPago,
-                fechaPago: fechaPago ? `${fechaPago}T00:00:00` : undefined
+                fechaPago: fechaPago || undefined
             });
             
             showSuccess('Pago registrado correctamente.');

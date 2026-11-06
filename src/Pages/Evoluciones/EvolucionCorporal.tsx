@@ -3,8 +3,6 @@ import { createPortal } from "react-dom";
 import { AppStyles } from "../../Styles/AppStyles";
 import { useEvolucionCorporal, type PosicionFoto } from "../../Hooks/Evoluciones/useEvolucionCorporal";
 import { X, Plus, ChevronDown, ChevronUp, Scale, Ruler, Camera, Trash2, Calendar, Pencil, ImagePlus } from "lucide-react";
-import TelarañaCompleta from "../../assets/Halloween/TelarañaCompleta.svg";
-import TelarañaConAraña3 from "../../assets/Halloween/TelarañaConAraña3.png";
 
 export const EvolucionCorporal = ({ currentUser }: { currentUser: any }) => {
     const {
@@ -74,8 +72,7 @@ export const EvolucionCorporal = ({ currentUser }: { currentUser: any }) => {
         <div className="mt-6 animate-fade-in pb-24 space-y-6 max-w-xl mx-auto relative">
             
             {/* FORMULARIO DE CARGA */}
-            <div className={`${AppStyles.glassCard} p-0 overflow-hidden relative`}>
-                <img src={TelarañaConAraña3} alt="" className="absolute -top-4 -right-4 w-24 h-24 opacity-80 pointer-events-none" />
+            <div className={`${AppStyles.glassCard} p-0 overflow-hidden`}>
                 <button 
                     onClick={() => isFormOpen ? resetForm() : setIsFormOpen(true)}
                     className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
@@ -170,11 +167,10 @@ export const EvolucionCorporal = ({ currentUser }: { currentUser: any }) => {
                         ))}
                     </div>
                 ) : historial.length === 0 ? (
-                    <div className={`${AppStyles.glassCard} flex flex-col items-center justify-center text-center py-10 border-dashed border-2 border-white/10 relative overflow-hidden`}>
-                        <img src={TelarañaCompleta} alt="" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 opacity-10 pointer-events-none" />
-                        <Scale className="w-16 h-16 text-gray-600 mb-4 opacity-50 relative z-10" />
-                        <p className="text-gray-400 font-medium relative z-10">Aún no has registrado tu progreso.</p>
-                        <p className="text-gray-500 text-sm mt-1 relative z-10">¡Comienza hoy mismo!</p>
+                    <div className={`${AppStyles.glassCard} flex flex-col items-center justify-center text-center py-10 border-dashed border-2 border-white/10`}>
+                        <Scale className="w-16 h-16 text-gray-600 mb-4 opacity-50" />
+                        <p className="text-gray-400 font-medium">Aún no has registrado tu progreso.</p>
+                        <p className="text-gray-500 text-sm mt-1">¡Comienza hoy mismo!</p>
                     </div>
                 ) : (
                     <>

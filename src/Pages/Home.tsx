@@ -8,19 +8,6 @@ import "swiper/css";
 // @ts-ignore
 import "swiper/css/pagination";
 
-// HALLOWEEN
-import SombreroBruja from "../assets/Halloween/SombreroBruja.svg";
-import CerrarSesion from "../assets/Halloween/CerrarSesion.svg";
-import CalabazaHome1 from "../assets/Halloween/CalabazaHome1.svg";
-import CalabazaHome2 from "../assets/Halloween/CalabazaHome2.svg";
-import CalabazaHome3 from "../assets/Halloween/CalabazaHome3.svg";
-import CalabazaHome4 from "../assets/Halloween/CalabazaHome4.svg";
-import CalabazaHome5 from "../assets/Halloween/CalabazaHome5.svg";
-import TelarañaHome1 from "../assets/Halloween/TelarañaHome1.svg";
-import TelarañaHome2 from "../assets/Halloween/TelarañaHome2.svg";
-import FondoInicioHomePC from "../assets/Halloween/FondoInicioHomePC.jpg";
-import FondoMenuLateralHomePC from "../assets/Halloween/FondoMenuLateralHomePC.jpg";
-
 // Hooks y Componentes
 import { useOptimizedHome } from "../Hooks/Home/useOptimizedHome";
 import { useAlertasRecepcion } from "../Hooks/Asistencias/useAlertasRecepcion";
@@ -178,14 +165,9 @@ export const Home = () => {
   if (isEntrenador || isAdmin) {
     const AdminDashboardWelcome = () => (
         <div className="animate-fade-in-up space-y-6 mt-20">
-          <div 
-            className="p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden"
-            style={{ 
-              backgroundImage: `linear-gradient(to right, rgba(17, 24, 39, 0.8), rgba(31, 41, 55, 0.8)), url(${FondoInicioHomePC})`, 
-              backgroundSize: 'cover', 
-              backgroundPosition: 'center' 
-            }}
-          >
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+
             <h2 className="text-3xl font-bold text-white relative z-10">
               Hola, <span className="text-green-400">{currentUser?.nombre}</span> 👋
             </h2>
@@ -197,13 +179,7 @@ export const Home = () => {
             </p>
           </div>
           {metrics && <StatsGrid metrics={metrics} userRole={currentUser?.rol || ''} />}
-        
-          <img src={CalabazaHome2} alt="Calabaza2" className="absolute bottom-28 left-[155px] w-24 h-24 z-8" />
-          <img src={CalabazaHome4} alt="Calabaza4" className="absolute bottom-10 left-[185px] w-32 h-32 z-10" />
-          <img src={CalabazaHome5} alt="Calabaza5" className="absolute bottom-5 left-42 w-48 h-48 z-12" />
-          <img src={CalabazaHome3} alt="Calabaza3" className="absolute bottom-6 right-8 w-30 h-30 z-10" />
-          <img src={CalabazaHome1} alt="Calabaza1" className="absolute bottom-10 right-40 w-24 h-24 z-10" />
-        
+                
         </div>
     );
 
@@ -248,23 +224,13 @@ export const Home = () => {
     return (
       <BackgroundLayout>
 
-        <img src={TelarañaHome1} alt="Telaraña1" className="absolute -top-[28px] left-[256px] w-60 h-60 z-10 pointer-events-none" />
-        <img src={TelarañaHome2} alt="Telaraña2" className="absolute -bottom-2 -right-6 w-60 h-60 z-20 pointer-events-none" />
-
         <div className="flex h-screen overflow-hidden font-sans">
           <WhatsAppModal />
-          <aside 
-            className="w-64 border-r border-white/5 flex flex-col justify-between md:flex shrink-0 transition-all duration-300 relative"
-            style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(36, 25, 47, 0), rgba(36, 25, 47, 0)), url(${FondoMenuLateralHomePC})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          >
+          <aside className="w-64 bg-[#24192f99] border-r border-white/5 flex flex-col justify-between md:flex shrink-0 transition-all duration-300">
+
             <div className="flex-1 overflow-hidden flex flex-col">
               <div className="h-20 flex items-center px-6 border-b border-white/5 cursor-pointer shrink-0 group" onClick={() => handleSidebarClick("Inicio")}>
                 <span className="text-2xl font-bold">
-                  <img src={SombreroBruja} alt="Sombrero" className="absolute -top-1 left-1 w-12 h-12 z-10 -rotate-12" />
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00AEEF] to-[#0071BC]">Gym</span>
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF8C00] to-[#d3932b]">Mate</span>
                 </span>
@@ -341,9 +307,9 @@ export const Home = () => {
             </div>
             <div className="shrink-0 bg-[#1a1225]">
               <WhatsAppStatus />
-              <div className="p-3">
+              <div className="p-4">
                 <button onClick={logout} className="flex items-center gap-3 w-full px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all font-medium text-sm">
-                  <span><img src={CerrarSesion} alt="Cerrar Sesión" className="w-7 h7 object-contain drop-shadow-[0_0_5px_rgba(248,113,113,0.5)]" /></span> Cerrar Sesión
+                  <span>{Icons.salir}</span> Cerrar Sesión
                 </button>
               </div>
             </div>
@@ -353,7 +319,7 @@ export const Home = () => {
               {renderAdminContent()}
             </div>
           </main>
-        </div>      
+        </div>
       </BackgroundLayout>
     );
   }
@@ -419,9 +385,9 @@ export const Home = () => {
 // SidebarItem ahora recibe hasAlert para mostrar la luz roja
 const SidebarItem = ({ icon, label, active, onClick, hasAlert }: { icon: React.ReactNode, label: string, active: boolean, onClick: () => void, hasAlert?: boolean }) => {
   return (
-    <div onClick={onClick} className={`relative flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 group ${active ? 'bg-orange-500/10 border-r-2 border-orange-500' : 'hover:bg-white/5'}`}>
-      <span className={`text-xl group-hover:scale-110 transition-transform ${active ? 'scale-110 text-orange-500' : 'text-green-500 group-hover:text-green-400'}`}>{icon}</span>
-      <span className={`font-medium text-sm ${active ? 'text-orange-500' : 'text-gray-400 group-hover:text-white'}`}>{label}</span>
+    <div onClick={onClick} className={`relative flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 group ${active ? 'bg-green-500/10 text-green-400 border-r-2 border-green-500' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+      <span className={`text-xl group-hover:scale-110 transition-transform ${active ? 'scale-110' : ''}`}>{icon}</span>
+      <span className="font-medium text-sm">{label}</span>
       
       {/* LA LUCECITA ROJA PARPADEANTE */}
       {hasAlert && (

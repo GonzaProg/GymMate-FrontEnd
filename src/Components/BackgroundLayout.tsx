@@ -5,7 +5,37 @@ interface BackgroundLayoutProps {
   className?: string;
 }
 
-import Fantasma from '../assets/Halloween/Fantasma.svg';
+// 1. ICONO MANCUERNA
+const DumbbellIcon = ({ style }: { style: React.CSSProperties }) => (
+  <div style={style} className="text-white/50"> 
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="1.5"
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+      width="100%" 
+      height="100%"
+    >
+      {/* Barra central */}
+      <rect x="7" y="11" width="10" height="2" rx="0.5" />
+
+      {/* 1. Discos GRANDES (Los más cercanos al centro) */}
+      <rect x="5" y="6" width="2" height="12" rx="1" />
+      <rect x="17" y="6" width="2" height="12" rx="1" />
+
+      {/* 2. Discos MEDIANOS */}
+      <rect x="3" y="7.5" width="2" height="9" rx="0.5" />
+      <rect x="19" y="7.5" width="2" height="9" rx="0.5" />
+
+      {/* 3. Discos PEQUEÑOS (Los de los extremos) */}
+      <rect x="1" y="9" width="2" height="6" rx="0.5" />
+      <rect x="21" y="9" width="2" height="6" rx="0.5" />
+    </svg>
+  </div>
+);
 
 export const BackgroundLayout: React.FC<BackgroundLayoutProps> = ({ children, className = "" }) => {
   // --- NUEVO ESTADO PARA CANTIDAD DE MANCUERNAS ---
@@ -44,15 +74,15 @@ export const BackgroundLayout: React.FC<BackgroundLayoutProps> = ({ children, cl
         <div style={styles.auroraEast}></div>
         <div style={styles.auroraWest}></div>
         
-        {/* 2. FANTASMAS PARPADEANTES DINÁMICOS */}
+        {/* 2. MANCUERNAS PARPADEANTES DINÁMICAS */}
         <div style={styles.starsContainer}>
-          {/* USAMOS LA VARIABLE dumbbellCount EN LUGAR DE UN NÚMERO FIJO */}
+
           {[...Array(dumbbellCount)].map((_, i) => { 
             const randomSize = 20 + Math.random() * 25; 
             const randomRotation = Math.random() * 360;
             
             return (
-              <div
+              <DumbbellIcon 
                 key={i} 
                 style={{
                   ...styles.star,
@@ -64,10 +94,7 @@ export const BackgroundLayout: React.FC<BackgroundLayoutProps> = ({ children, cl
                   animationDelay: `${Math.random() * 5}s`,
                   animationDuration: `${4 + Math.random() * 4}s`,
                 }}
-                className="opacity-60"
-              >
-                  <img src={Fantasma} alt="" className="w-full h-full object-contain" />
-              </div>
+              />
             )
           })}
         </div>

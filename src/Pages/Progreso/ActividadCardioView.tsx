@@ -4,8 +4,6 @@ import { AppStyles } from "../../Styles/AppStyles";
 import { Input } from "../../Components/UI/Input";
 import { ChevronLeft, ChevronRight, Activity, Clock, X, Navigation, Bike, Footprints, Plus, ChevronDown, Trophy, ArrowUp, ArrowDown } from "lucide-react";
 import { showError } from "../../Helpers/Alerts";
-import TelarañaEsquina from "../../assets/Halloween/TelarañaEsquina.svg";
-import TelarañaConAraña4 from "../../assets/Halloween/TelarañaConAraña4.png";
 
 export const ActividadCardioView = () => {
     const { historial, estadisticas, loading, registrarActividad, eliminarActividad } = useActividadCardio();
@@ -125,11 +123,7 @@ export const ActividadCardioView = () => {
         if (!periodStats) return null;
         return (
             <div className={`p-4 rounded-2xl border flex items-center justify-between relative overflow-hidden ${isYear ? 'bg-gradient-to-r from-orange-500/20 to-orange-900/20 border-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.1)]' : 'bg-gray-900/50 border-white/5'}`}>
-                {isYear ? (
-                    <Trophy className="absolute right-4 top-1/2 -translate-y-1/2 w-20 h-20 text-orange-500/10 rotate-12 pointer-events-none" />
-                ) : (
-                    <img src={TelarañaEsquina} alt="" className="absolute top-[-5px] right-[-20px] w-20 h-20 opacity-60 pointer-events-none" />
-                )}
+                {isYear && <Trophy className="absolute right-4 top-1/2 -translate-y-1/2 w-20 h-20 text-orange-500/10 rotate-12 pointer-events-none" />}
                 
                 {/* Izquierda: Título y Total */}
                 <div className="flex flex-col relative z-10 w-1/2">
@@ -177,8 +171,7 @@ export const ActividadCardioView = () => {
     return (
         <div className="space-y-6 animate-fade-in pb-24">
             {/* AGREGAR ACTIVIDAD (ACORDEÓN) */}
-            <div className={`${AppStyles.glassCard} overflow-hidden relative`}>
-                <img src={TelarañaConAraña4} alt="" className="absolute -top-4 -right-14 w-36 h-36 opacity-70 pointer-events-none" />
+            <div className={`${AppStyles.glassCard} overflow-hidden`}>
                 <button 
                     onClick={() => setIsFormOpen(!isFormOpen)}
                     className="w-full flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"

@@ -95,7 +95,7 @@ export const Login = () => {
                         <div className="flex items-center gap-2">
                             <span className= {'w-[4.5rem] text-center px-1 text-gray-400'} >+54</span>
                             <Input 
-                                placeholder="Cód." 
+                                placeholder="Característica" 
                                 type="tel" 
                                 maxLength={4}
                                 value={areaCode} 

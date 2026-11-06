@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthUser } from "../../Hooks/Auth/useAuthUser";
 import { useGymCachedImages } from "../../Hooks/StudentsHome/useGymCachedImages";
-import DosMurcielagos from "../../assets/Halloween/DosMurcielagos.svg";
-import SombreroBruja from "../../assets/Halloween/SombreroBruja.svg";
 
 export const NavbarSuperior = () => {
   const navigate = useNavigate();
@@ -38,8 +36,7 @@ export const NavbarSuperior = () => {
             onClick={() => navigate("/home")} 
             className="flex items-center cursor-pointer group z-20 gap-3"
         >
-            <span className="self-center text-2xl font-bold whitespace-nowrap relative mt-3">
-                <img src={SombreroBruja} alt="Sombrero" className="absolute -top-7 -left-4 w-12 h-12 z-10 -rotate-12" />
+            <span className="self-center text-2xl font-bold whitespace-nowrap">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00AEEF] to-[#0071BC]">Gym</span>
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF8C00] to-[#d3932b]">Mate</span>
             </span>
@@ -52,16 +49,6 @@ export const NavbarSuperior = () => {
             )}
         </div>
         
-        {/* DERECHA: NOTIFICACIONES */}
-        <div className="flex items-center gap-4 z-20">
-          <div className="relative" ref={dropdownRef}>
-            <button 
-                className="relative p-2 text-gray-300 hover:text-white transition-colors hover:bg-white/10 rounded-full focus:outline-none"
-            >
-                <img src={DosMurcielagos} alt="Notificaciones" className="w-11 h-11 opacity-80 hover:opacity-100 transition-opacity" />
-            </button>
-          </div>
-        </div>
       </div>
     </nav>
 
