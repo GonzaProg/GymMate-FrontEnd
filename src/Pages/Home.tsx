@@ -11,6 +11,7 @@ import "swiper/css/pagination";
 // Hooks y Componentes
 import { useOptimizedHome } from "../Hooks/Home/useOptimizedHome";
 import { useAlertasRecepcion } from "../Hooks/Asistencias/useAlertasRecepcion";
+import { useAlertaPagoMensualGym } from "../Hooks/Gym/useAlertaPagoMensualGym";
 import { usePushNotifications } from "../Hooks/Notificaciones/usePushNotifications";
 import { NavbarInferior } from "../Components/Mobile/NavbarInferior"; 
 import { WhatsAppModal } from "../Components/WhatsApp/WhatsAppModal";
@@ -59,7 +60,7 @@ const DietasManager = lazy(() => import("../Pages/Dietas/DietasManager").then(mo
 import {
   Home as HomeIcon, Dumbbell, Gem, TrendingUp, Users, RefreshCw, Send,
   LogOut, User, Settings, Building2, Receipt, BookOpen, ShoppingBag,
-  FileText, CheckSquare, Bell, UserPlus, MessageSquare, Wallet, ClipboardList, Salad
+  FileText, CheckSquare, Bell, UserPlus, MessageSquare, Wallet, ClipboardList, Salad, AlertTriangle
 } from "lucide-react";
 
 const Icons = {
@@ -114,6 +115,13 @@ export const Home = () => {
       isAsistenciaHabilitada
   );
 
+  // Verificación de pago mensual de la app (días 10 al 15, excluyendo GYM-001)
+  const { mostrarAlertaPagoGym } = useAlertaPagoMensualGym(
+      isEntrenador || isAdmin,
+      currentUser?.gym?.id,
+      currentUser?.gym?.codigoAcceso
+  );
+
   const handleEditRoutine = (id: number) => {
       setRoutineIdToEdit(id);
       setGroupIdToEdit(null);
@@ -163,9 +171,28 @@ export const Home = () => {
   }
 
   if (isEntrenador || isAdmin) {
+    // Vista Entrenador/Admin - Vista desde Computadora
     const AdminDashboardWelcome = () => (
         <div className="animate-fade-in-up space-y-6 mt-20">
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+          {mostrarAlertaPagoGym && (
+            <div className="bg-amber-500/15 border border-amber-500/40 text-amber-200 p-4 rounded-2xl shadow-xl backdrop-blur-md flex items-center gap-4 animate-fade-in-down">
+              <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-400 shrink-0">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-bold text-amber-300 text-sm uppercase tracking-wider">
+                  Aviso de Vencimiento Mensual
+                </h4>
+                <p className="text-sm text-gray-200 mt-0.5">
+                  Recuerda abonar la mensualidad del servicio antes del 15 de cada mes para evitar el bloqueo de la aplicación.
+                </p>
+                <p className="text-sm text-amber-300 mt-0.5">
+                  Alias MercadoPago: gonzaa.vas
+                </p>
+              </div>
+            </div>
+          )}
+          <div className="bg-gradient-to-r from-gray-900 to-green-900 p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
 
             <h2 className="text-3xl font-bold text-white relative z-10">
@@ -325,6 +352,7 @@ export const Home = () => {
   }
 
   return (
+    // Vista Alumno - Vista desde Celular
     <BackgroundLayout>
       
         <NavbarSuperior />
