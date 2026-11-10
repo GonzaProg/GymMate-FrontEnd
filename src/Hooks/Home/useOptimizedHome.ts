@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { DashboardApi, type DashboardMetrics } from "../../API/Dashboard/DashboardApi";
+import { UsuarioApi } from "../../API/Usuarios/UsuarioApi";
 import { useNavigate } from "react-router-dom";
 
 export interface User {
@@ -63,6 +64,10 @@ export const useOptimizedHome = () => {
                 // Cargar métricas solo después de tener el usuario
                 loadMetrics(userObj.rol);
 
+                // Actualizar última conexión al abrir la app o entrar con sesión recordada
+                UsuarioApi.actualizarUltimaConexion().catch((err) => {
+                    console.error("Error actualizando última conexión:", err);
+                });
 
             } catch (error) {
                 console.error("Error sesión:", error);
@@ -101,6 +106,10 @@ export const useOptimizedHome = () => {
         // Resetear métricas para que se carguen con el nuevo rol
         metricsLoadedRef.current = false;
         loadMetrics(user.rol);
+
+        UsuarioApi.actualizarUltimaConexion().catch((err) => {
+            console.error("Error actualizando última conexión:", err);
+        });
     };
 
     const logout = () => {

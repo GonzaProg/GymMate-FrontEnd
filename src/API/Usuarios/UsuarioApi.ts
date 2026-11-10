@@ -95,5 +95,11 @@ export const UsuarioApi = {
     saveFcmToken: async (token: string) => {
         const response = await api.post(`/users/fcm-token`, { token });
         return response.data;
+    },
+
+    // Actualizar última conexión del usuario al abrir la app o iniciar sesión
+    actualizarUltimaConexion: async () => {
+        const response = await api.post(`/users/ultima-conexion`);
+        return response.data;
     }
 };
