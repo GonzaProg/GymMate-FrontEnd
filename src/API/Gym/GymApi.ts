@@ -28,6 +28,7 @@ export interface GymPreferencesDTO {
     envioAutomaticoCumpleanos?: boolean; 
     envioAutomaticoRecibos?: boolean;
     mensajeCumpleanos?: string;
+    mensajeInactividad?: string;
     moduloAsistencia?: boolean;
     finanzasPassword?: string;
     mpAccessToken?: string;

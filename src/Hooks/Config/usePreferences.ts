@@ -9,6 +9,7 @@ export const usePreferences = () => {
     const [autoBirthday, setAutoBirthday] = useState(true);
     const [autoReceipts, setAutoReceipts] = useState(true);
     const [birthdayMessage, setBirthdayMessage] = useState("");
+    const [inactivityMessage, setInactivityMessage] = useState("");
     const [moduloAsistencia, setModuloAsistencia] = useState(true);
     const [cambiarMPAccessToken, setCambiarMPAccessToken] = useState(false);
 
@@ -40,6 +41,7 @@ export const usePreferences = () => {
 
     const [loading, setLoading] = useState(true);
     const [savingMessage, setSavingMessage] = useState(false);
+    const [savingInactivityMessage, setSavingInactivityMessage] = useState(false);
 
     // Cargar Configuración del Backend
     useEffect(() => {
@@ -49,6 +51,7 @@ export const usePreferences = () => {
                 setAutoBirthday(data.envioAutomaticoCumpleanos);
                 setAutoReceipts(data.envioAutomaticoRecibos);
                 setBirthdayMessage(data.mensajeCumpleanos || "");
+                setInactivityMessage(data.mensajeInactividad || "");
                 setModuloAsistencia(data.moduloAsistencia ?? true);
                 setCambiarMPAccessToken(data.cambiarMPAccessToken ?? false);
                 setConcurrenciaBajaMax(data.concurrenciaBajaMax ?? 8);
@@ -155,6 +158,18 @@ export const usePreferences = () => {
             showError("No se pudo guardar el mensaje");
         } finally {
             setSavingMessage(false);
+        }
+    };
+
+    const saveInactivityMessage = async () => {
+        setSavingInactivityMessage(true);
+        try {
+            await GymApi.updatePreferences({ mensajeInactividad: inactivityMessage });
+            showSuccess("Mensaje de inactividad actualizado ✅");
+        } catch (error) {
+            showError("No se pudo guardar el mensaje de inactividad");
+        } finally {
+            setSavingInactivityMessage(false);
         }
     };
 
@@ -278,11 +293,15 @@ export const usePreferences = () => {
     return {
         loading,
         savingMessage,
+        savingInactivityMessage,
         autoBirthday,
         autoReceipts,
         birthdayMessage,
         setBirthdayMessage,
         saveBirthdayMessage,
+        inactivityMessage,
+        setInactivityMessage,
+        saveInactivityMessage,
         toggleBirthday,
         toggleReceipts,
         showFinancialMetrics,
