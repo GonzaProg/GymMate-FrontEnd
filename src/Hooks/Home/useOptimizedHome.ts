@@ -15,6 +15,7 @@ export interface User {
     fotoPerfil?: string;
     rol: string; 
     token?: string;
+    fcmTokens?: string[];
     gym?: {
         id: number;
         nombre?: string;
@@ -65,9 +66,23 @@ export const useOptimizedHome = () => {
                 loadMetrics(userObj.rol);
 
                 // Actualizar última conexión al abrir la app o entrar con sesión recordada
-                UsuarioApi.actualizarUltimaConexion().catch((err) => {
-                    console.error("Error actualizando última conexión:", err);
-                });
+                // y sincronizar fcmTokens desde la base de datos
+                UsuarioApi.actualizarUltimaConexion()
+                    .then((res) => {
+                        if (res && Array.isArray(res.fcmTokens)) {
+                            const storage = localStorage.getItem("user") ? localStorage : sessionStorage;
+                            const storedStr = storage.getItem("user");
+                            if (storedStr) {
+                                const parsed = JSON.parse(storedStr);
+                                parsed.fcmTokens = res.fcmTokens;
+                                storage.setItem("user", JSON.stringify(parsed));
+                            }
+                            setCurrentUser((prev) => prev ? { ...prev, fcmTokens: res.fcmTokens } : prev);
+                        }
+                    })
+                    .catch((err) => {
+                        console.error("Error actualizando última conexión:", err);
+                    });
 
             } catch (error) {
                 console.error("Error sesión:", error);

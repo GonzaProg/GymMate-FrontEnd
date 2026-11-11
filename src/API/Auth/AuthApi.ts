@@ -32,7 +32,8 @@ export interface LoginResponse {
         rol: string;
         gmail?: string;
         fotoPerfil?: string;
-        gym?: { // <--- Info del gym
+        fcmTokens?: string[];
+        gym?: {
             id: number;
             nombre: string;
             logoUrl?: string;

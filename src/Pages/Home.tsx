@@ -89,7 +89,8 @@ export const Home = () => {
   const { currentUser, isEntrenador, isAdmin, isLoading, metrics, logout } = useOptimizedHome();  
 
   // Registrar Push Notifications (si estamos en celular y hay usuario)
-  usePushNotifications(currentUser);
+  // Si el usuario no tiene fcmToken guardado, espera unos segundos para guardarlo antes de cargar el resto
+  const { isCheckingPush } = usePushNotifications(currentUser);
 
   // ESTADOS ADMIN
   const [activeTab, setActiveTab] = useState("Inicio");
@@ -100,8 +101,8 @@ export const Home = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const swiperRef = useRef<any>(null);
 
-  // Verificamos si está vencido para ocultar navegación
-  const { activePlans, isUserExpired, loading: loadingPlans } = useUserPlan();
+  // Verificamos si está vencido para ocultar navegación (espera a que termine el chequeo de fcmToken en móvil)
+  const { activePlans, isUserExpired, loading: loadingPlans } = useUserPlan(!isLoading && !isCheckingPush && !!currentUser);
   
   const [visitedSlides, setVisitedSlides] = useState<Set<number>>(new Set([0]));
 
@@ -162,7 +163,7 @@ export const Home = () => {
     }
   };
 
-  if (isLoading || loadingPlans) return <div className="min-h-screen flex items-center justify-center bg-gray-900"><p className="text-white animate-pulse">Cargando...</p></div>;
+  if (isLoading || isCheckingPush || loadingPlans) return <div className="min-h-screen flex items-center justify-center bg-gray-900"><p className="text-white animate-pulse">Cargando...</p></div>;
   if (!currentUser) return null; 
 
   if (isUserExpired && currentUser?.rol === 'Alumno') {

@@ -13,6 +13,7 @@ export interface User {
     fotoPerfil?: string;
     rol: string;
     token?: string;
+    fcmTokens?: string[];
     gym?: {
         id: number;
         nombre: string;
