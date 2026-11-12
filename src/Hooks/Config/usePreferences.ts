@@ -20,6 +20,7 @@ export const usePreferences = () => {
     const [fraseConcurrenciaMedia, setFraseConcurrenciaMedia] = useState("Hay movimiento, pero no es excusa para no entrenar. ¡Vamos!");
     const [fraseConcurrenciaAlta, setFraseConcurrenciaAlta] = useState("Está bastante lleno. ¡Queda a tu elección!");
     const [savingConcurrencia, setSavingConcurrencia] = useState(false);
+    const [ultimaVersionApp, setUltimaVersionApp] = useState("");
 
     // Auth info to check if already linked
     const currentUserStr = localStorage.getItem("user") || sessionStorage.getItem("user");
@@ -59,6 +60,7 @@ export const usePreferences = () => {
                 setFraseConcurrenciaBaja(data.fraseConcurrenciaBaja ?? "Está súper tranquilo. ¡Es el momento perfecto para entrenar!");
                 setFraseConcurrenciaMedia(data.fraseConcurrenciaMedia ?? "Hay movimiento, pero no es excusa para no entrenar. ¡Vamos!");
                 setFraseConcurrenciaAlta(data.fraseConcurrenciaAlta ?? "Está bastante lleno. ¡Queda a tu elección!");
+                if (data.ultimaVersionApp) setUltimaVersionApp(data.ultimaVersionApp);
             } catch (err) {
                 console.error("Error cargando preferencias", err);
             } finally {
@@ -216,7 +218,7 @@ export const usePreferences = () => {
         try {
             const platform = Capacitor.getPlatform();
             const isNative = platform === 'electron' || navigator.userAgent.toLowerCase().includes('electron');
-            
+
             const { url } = await MercadoPagoApi.getOAuthUrl(isNative);
 
             if (isNative) {
@@ -317,6 +319,7 @@ export const usePreferences = () => {
         fraseConcurrenciaBaja, setFraseConcurrenciaBaja,
         fraseConcurrenciaMedia, setFraseConcurrenciaMedia,
         fraseConcurrenciaAlta, setFraseConcurrenciaAlta,
-        saveConcurrenciaConfig, savingConcurrencia
+        saveConcurrenciaConfig, savingConcurrencia,
+        ultimaVersionApp
     };
 };

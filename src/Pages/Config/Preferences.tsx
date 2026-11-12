@@ -22,7 +22,8 @@ export const Preferences = () => {
         fraseConcurrenciaBaja, setFraseConcurrenciaBaja,
         fraseConcurrenciaMedia, setFraseConcurrenciaMedia,
         fraseConcurrenciaAlta, setFraseConcurrenciaAlta,
-        saveConcurrenciaConfig, savingConcurrencia
+        saveConcurrenciaConfig, savingConcurrencia,
+        ultimaVersionApp
     } = usePreferences();
 
     if (loading) return <div className="text-white text-center pt-20">Cargando preferencias...</div>;
@@ -336,6 +337,13 @@ export const Preferences = () => {
                             </div>
                         </div>
                     )}
+
+                    {/* PIE DE PÁGINA: VERSIÓN ACTUAL DE LA APP*/}
+                    <div className="pt-4 pb-8 text-center">
+                        <p className="text-xs text-white font-mono tracking-wider">
+                            Versión de la app: v{ultimaVersionApp}
+                        </p>
+                    </div>
 
                 </div>
             </div>

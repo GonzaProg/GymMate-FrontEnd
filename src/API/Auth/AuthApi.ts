@@ -41,6 +41,7 @@ export interface LoginResponse {
             codigoAcceso: string;
             moduloAsistencia?: boolean;
             tieneMercadoPago?: boolean;
+            ultimaVersionApp?: string;
         };
     };
 }

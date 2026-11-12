@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProfile } from "../../Hooks/Profile/useProfile";
 import { useLogout } from "../../Hooks/Login/useLogout"; // Importamos el hook de logout
 import { Input } from "../../Components/UI/Input";
@@ -6,6 +6,7 @@ import { Button } from "../../Components/UI/Button";
 import { AppStyles } from "../../Styles/AppStyles"; 
 import { ProfileStyles } from "../../Styles/ProfileStyles"; 
 import { formatearFechaUTC } from "../../Helpers/DateUtils";
+import { GymApi } from "../../API/Gym/GymApi";
 import { Camera, Edit2, Lock, AlertTriangle, ChevronDown, ChevronUp, LogOut } from "lucide-react";
 
 interface ProfileProps {
@@ -15,6 +16,26 @@ interface ProfileProps {
 export const Profile = ({ isMobile = false }: ProfileProps) => {
   const { logout } = useLogout();
   const [showDangerZone, setShowDangerZone] = useState(false);
+  const [ultimaVersionApp, setUltimaVersionApp] = useState<string>(() => {
+    try {
+      const str = localStorage.getItem("user") || sessionStorage.getItem("user");
+      if (!str) return "";
+      const parsed = JSON.parse(str);
+      return parsed?.gym?.ultimaVersionApp || "";
+    } catch {
+      return "";
+    }
+  });
+
+  useEffect(() => {
+    GymApi.getAppVersion()
+      .then((res) => {
+        if (res?.ultimaVersionApp) {
+          setUltimaVersionApp(res.ultimaVersionApp);
+        }
+      })
+      .catch(() => {});
+  }, []);
   
   const { 
     loading, 
@@ -291,6 +312,15 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
                        Salir
                     </button>
                 </div>
+            </div>
+          )}
+
+          {/* PIE DE PÁGINA: VERSIÓN ACTUAL DE LA APP (SOLO VISTA DE ALUMNO) */}
+          {userData.rol === 'Alumno' && (
+            <div className="pt-2 pb-6 text-center">
+              <p className="text-xs text-white font-mono tracking-wider">
+                Versión de la app: v{ultimaVersionApp}
+              </p>
             </div>
           )}
 
