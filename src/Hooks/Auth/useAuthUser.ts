@@ -13,6 +13,7 @@ export interface User {
     fotoPerfil?: string;
     rol: string;
     token?: string;
+    fcmTokens?: string[];
     gym?: {
         id: number;
         nombre: string;
@@ -27,6 +28,7 @@ export interface User {
         fondoInicioCelularUrl?: string;
         fechaModificacionFondo?: number;
         fechaModificacionLogo?: number;
+        ultimaVersionApp?: string;
     };
 }
 
@@ -59,7 +61,7 @@ export const useAuthUser = () => {
                     GymApi.getByCode(userObj.gym.codigoAcceso).then((freshGym: any) => {
                         const isLogoChanged = freshGym.logoUrl !== userObj.gym?.logoUrl || freshGym.fechaModificacionLogo !== userObj.gym?.fechaModificacionLogo;
                         const isFondoChanged = freshGym.fondoInicioCelularUrl !== userObj.gym?.fondoInicioCelularUrl || freshGym.fechaModificacionFondo !== userObj.gym?.fechaModificacionFondo;
-                        
+
                         if (isLogoChanged || isFondoChanged) {
                             const updatedUser = { ...userObj, gym: freshGym };
                             localStorage.setItem("user", JSON.stringify(updatedUser));

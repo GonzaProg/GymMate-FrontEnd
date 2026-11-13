@@ -3,12 +3,14 @@ import { GymApi } from "../../API/Gym/GymApi";
 import { MercadoPagoApi } from "../../API/Pagos/MercadoPagoApi";
 import { showError, showSuccess } from "../../Helpers/Alerts";
 import { Capacitor } from '@capacitor/core';
+import { getInstalledDesktopAppVersion } from "../../Config/AppVersion";
 
 export const usePreferences = () => {
     // DB Settings
     const [autoBirthday, setAutoBirthday] = useState(true);
     const [autoReceipts, setAutoReceipts] = useState(true);
     const [birthdayMessage, setBirthdayMessage] = useState("");
+    const [inactivityMessage, setInactivityMessage] = useState("");
     const [moduloAsistencia, setModuloAsistencia] = useState(true);
     const [cambiarMPAccessToken, setCambiarMPAccessToken] = useState(false);
 
@@ -19,6 +21,7 @@ export const usePreferences = () => {
     const [fraseConcurrenciaMedia, setFraseConcurrenciaMedia] = useState("Hay movimiento, pero no es excusa para no entrenar. ¡Vamos!");
     const [fraseConcurrenciaAlta, setFraseConcurrenciaAlta] = useState("Está bastante lleno. ¡Queda a tu elección!");
     const [savingConcurrencia, setSavingConcurrencia] = useState(false);
+    const [desktopAppVersion, setDesktopAppVersion] = useState<string | null>(null);
 
     // Auth info to check if already linked
     const currentUserStr = localStorage.getItem("user") || sessionStorage.getItem("user");
@@ -40,6 +43,7 @@ export const usePreferences = () => {
 
     const [loading, setLoading] = useState(true);
     const [savingMessage, setSavingMessage] = useState(false);
+    const [savingInactivityMessage, setSavingInactivityMessage] = useState(false);
 
     // Cargar Configuración del Backend
     useEffect(() => {
@@ -49,6 +53,7 @@ export const usePreferences = () => {
                 setAutoBirthday(data.envioAutomaticoCumpleanos);
                 setAutoReceipts(data.envioAutomaticoRecibos);
                 setBirthdayMessage(data.mensajeCumpleanos || "");
+                setInactivityMessage(data.mensajeInactividad || "");
                 setModuloAsistencia(data.moduloAsistencia ?? true);
                 setCambiarMPAccessToken(data.cambiarMPAccessToken ?? false);
                 setConcurrenciaBajaMax(data.concurrenciaBajaMax ?? 8);
@@ -56,6 +61,8 @@ export const usePreferences = () => {
                 setFraseConcurrenciaBaja(data.fraseConcurrenciaBaja ?? "Está súper tranquilo. ¡Es el momento perfecto para entrenar!");
                 setFraseConcurrenciaMedia(data.fraseConcurrenciaMedia ?? "Hay movimiento, pero no es excusa para no entrenar. ¡Vamos!");
                 setFraseConcurrenciaAlta(data.fraseConcurrenciaAlta ?? "Está bastante lleno. ¡Queda a tu elección!");
+                const pcVer = await getInstalledDesktopAppVersion();
+                setDesktopAppVersion(pcVer);
             } catch (err) {
                 console.error("Error cargando preferencias", err);
             } finally {
@@ -158,6 +165,18 @@ export const usePreferences = () => {
         }
     };
 
+    const saveInactivityMessage = async () => {
+        setSavingInactivityMessage(true);
+        try {
+            await GymApi.updatePreferences({ mensajeInactividad: inactivityMessage });
+            showSuccess("Mensaje de inactividad actualizado ✅");
+        } catch (error) {
+            showError("No se pudo guardar el mensaje de inactividad");
+        } finally {
+            setSavingInactivityMessage(false);
+        }
+    };
+
     const saveConcurrenciaConfig = async () => {
         if (concurrenciaMediaMax <= concurrenciaBajaMax) {
             showError("El máximo de concurrencia media debe ser mayor al de concurrencia baja");
@@ -201,7 +220,7 @@ export const usePreferences = () => {
         try {
             const platform = Capacitor.getPlatform();
             const isNative = platform === 'electron' || navigator.userAgent.toLowerCase().includes('electron');
-            
+
             const { url } = await MercadoPagoApi.getOAuthUrl(isNative);
 
             if (isNative) {
@@ -278,11 +297,15 @@ export const usePreferences = () => {
     return {
         loading,
         savingMessage,
+        savingInactivityMessage,
         autoBirthday,
         autoReceipts,
         birthdayMessage,
         setBirthdayMessage,
         saveBirthdayMessage,
+        inactivityMessage,
+        setInactivityMessage,
+        saveInactivityMessage,
         toggleBirthday,
         toggleReceipts,
         showFinancialMetrics,
@@ -298,6 +321,7 @@ export const usePreferences = () => {
         fraseConcurrenciaBaja, setFraseConcurrenciaBaja,
         fraseConcurrenciaMedia, setFraseConcurrenciaMedia,
         fraseConcurrenciaAlta, setFraseConcurrenciaAlta,
-        saveConcurrenciaConfig, savingConcurrencia
+        saveConcurrenciaConfig, savingConcurrencia,
+        desktopAppVersion
     };
 };

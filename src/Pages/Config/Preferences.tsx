@@ -9,6 +9,7 @@ export const Preferences = () => {
         autoBirthday, toggleBirthday,
         autoReceipts, toggleReceipts,
         birthdayMessage, setBirthdayMessage, saveBirthdayMessage, savingMessage,
+        inactivityMessage, setInactivityMessage, saveInactivityMessage, savingInactivityMessage,
         showFinancialMetrics, setShowFinancialMetrics,
         moduloAsistencia, toggleAsistencia,
         passwordCurrent, setPasswordCurrent,
@@ -21,7 +22,8 @@ export const Preferences = () => {
         fraseConcurrenciaBaja, setFraseConcurrenciaBaja,
         fraseConcurrenciaMedia, setFraseConcurrenciaMedia,
         fraseConcurrenciaAlta, setFraseConcurrenciaAlta,
-        saveConcurrenciaConfig, savingConcurrencia
+        saveConcurrenciaConfig, savingConcurrencia,
+        desktopAppVersion
     } = usePreferences();
 
     if (loading) return <div className="text-white text-center pt-20">Cargando preferencias...</div>;
@@ -92,6 +94,41 @@ export const Preferences = () => {
                                 <p className="text-gray-400 text-sm">Enviar PDF del comprobante automáticamente al registrar un pago o renovación.</p>
                             </div>
                             <ToggleSwitch checked={autoReceipts} onChange={toggleReceipts} />
+                        </div>
+
+                        <div className="h-px bg-white/10 my-6"></div>
+
+                        {/* Seguimiento por Inactividad */}
+                        <div>
+                            <div className="mb-4">
+                                <p className="text-white font-bold text-lg">Seguimiento por Inactividad</p>
+                                <p className="text-gray-400 text-sm">Mensaje que se envía automáticamente a los socios que llevan más de 1 mes sin conectarse.</p>
+                            </div>
+
+                            <div className="ml-1 pl-4 border-l-2 border-green-500/30">
+                                <label className="block text-gray-300 text-sm font-bold mb-2">
+                                    Mensaje Personalizado de Inactividad:
+                                </label>
+                                <div className="text-xs text-gray-500 mb-2">
+                                    Puedes usar <span className="text-green-400">{`{nombre}`}</span> para el nombre del socio y <span className="text-green-400">{`{gym}`}</span> para el nombre del gimnasio.
+                                    <span className="italic opacity-70 ml-1">(Si lo dejas vacío, se usará el mensaje por defecto).</span>
+                                </div>
+                                <textarea 
+                                    value={inactivityMessage}
+                                    onChange={(e) => setInactivityMessage(e.target.value)}
+                                    className="w-full bg-gray-900/50 text-white p-3 rounded-lg border border-white/10 focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm h-36 resize-none"
+                                    placeholder={`¡Hola {nombre}! 👋\n\nDesde *{gym}* notamos que hace más de un mes no venís al gimnasio y queríamos saber cómo estás. 🏋️‍♂️\n\n¿Necesitás ayuda con algo, tu rutina o tus horarios?\n\n¡Contanos si podemos ayudarte en algo, te esperamos cuando quieras retomar! 💪`}
+                                />
+                                <div className="flex justify-end mt-2">
+                                    <button 
+                                        onClick={saveInactivityMessage}
+                                        disabled={savingInactivityMessage}
+                                        className="bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-2"
+                                    >
+                                        {savingInactivityMessage ? 'Guardando...' : <span className="flex items-center justify-center gap-2"><Save className="w-4 h-4" /> Guardar Mensaje</span>}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -298,6 +335,15 @@ export const Preferences = () => {
                                     </div>
                                 )}
                             </div>
+                        </div>
+                    )}
+
+                    {/* PIE DE PÁGINA: VERSIÓN ACTUAL DE LA APP DE PC (OCULTO EN WEB) */}
+                    {desktopAppVersion && (
+                        <div className="pt-4 pb-8 text-center">
+                            <p className="text-xs text-white font-mono tracking-wider">
+                                Versión de la app: v{desktopAppVersion}
+                            </p>
                         </div>
                     )}
 

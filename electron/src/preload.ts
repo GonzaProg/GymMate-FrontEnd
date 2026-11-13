@@ -14,5 +14,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Función para limpiar listeners
   removeAllListeners: (channel: string) => {
     ipcRenderer.removeAllListeners(channel);
-  }
+  },
+  // Obtener la versión instalada de la app de escritorio (PC)
+  getAppVersion: () => ipcRenderer.invoke('get-app-version')
 });
