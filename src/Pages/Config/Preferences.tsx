@@ -23,7 +23,7 @@ export const Preferences = () => {
         fraseConcurrenciaMedia, setFraseConcurrenciaMedia,
         fraseConcurrenciaAlta, setFraseConcurrenciaAlta,
         saveConcurrenciaConfig, savingConcurrencia,
-        ultimaVersionApp
+        desktopAppVersion
     } = usePreferences();
 
     if (loading) return <div className="text-white text-center pt-20">Cargando preferencias...</div>;
@@ -338,12 +338,14 @@ export const Preferences = () => {
                         </div>
                     )}
 
-                    {/* PIE DE PÁGINA: VERSIÓN ACTUAL DE LA APP*/}
-                    <div className="pt-4 pb-8 text-center">
-                        <p className="text-xs text-white font-mono tracking-wider">
-                            Versión de la app: v{ultimaVersionApp}
-                        </p>
-                    </div>
+                    {/* PIE DE PÁGINA: VERSIÓN ACTUAL DE LA APP DE PC (OCULTO EN WEB) */}
+                    {desktopAppVersion && (
+                        <div className="pt-4 pb-8 text-center">
+                            <p className="text-xs text-white font-mono tracking-wider">
+                                Versión de la app: v{desktopAppVersion}
+                            </p>
+                        </div>
+                    )}
 
                 </div>
             </div>

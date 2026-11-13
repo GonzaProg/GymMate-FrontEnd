@@ -406,7 +406,7 @@ export const Home = () => {
               </div>
 
               <h3 className="text-xl font-extrabold text-white mb-2">
-                ¡Nueva versión disponible! 🚀
+                ¡Nueva versión disponible!
               </h3>
 
               <p className="text-gray-300 text-sm leading-relaxed mb-4">
