@@ -1,4 +1,4 @@
-import { useState, useRef, Suspense, lazy } from "react";
+import { useState, useEffect, useRef, Suspense, lazy } from "react";
 
 // Swiper Imports
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -22,6 +22,7 @@ import { BackgroundLayout } from "../Components/BackgroundLayout";
 import { NavbarSuperior } from "../Components/Mobile/NavbarSuperior";
 import { StatsGrid } from "../Components/Dashboard/StatsGrid";
 import { CloudinaryApi } from "../Helpers/Cloudinary/Cloudinary";
+import { getCurrentAppVersion, isVersionOutdated } from "../Config/AppVersion";
 
 // Pagina inicial de alumnos con plan expirado
 import { ExpiredPlanPage } from "./StudentsHome/ExpiredPlanPage";
@@ -56,11 +57,12 @@ const EmpleadosManager = lazy(() => import("../Pages/Empleados/EmpleadosManager"
 const GastosManager = lazy(() => import("../Pages/Pagos/GastosManager").then(module => ({ default: module.GastosManager })));
 const NotasManager = lazy(() => import("../Pages/Notas/NotasManager").then(module => ({ default: module.NotasManager })));
 const DietasManager = lazy(() => import("../Pages/Dietas/DietasManager").then(module => ({ default: module.DietasManager })));
+const AppVersionManager = lazy(() => import("../Pages/Config/AppVersionManager").then(module => ({ default: module.AppVersionManager })));
 
 import {
   Home as HomeIcon, Dumbbell, Gem, TrendingUp, Users, RefreshCw, Send,
   LogOut, User, Settings, Building2, Receipt, BookOpen, ShoppingBag,
-  FileText, CheckSquare, Bell, UserPlus, MessageSquare, Wallet, ClipboardList, Salad, AlertTriangle
+  FileText, CheckSquare, Bell, UserPlus, MessageSquare, Wallet, ClipboardList, Salad, AlertTriangle, Smartphone
 } from "lucide-react";
 
 const Icons = {
@@ -69,7 +71,7 @@ const Icons = {
   enviarPDF: <Send size={20} />, renovar: <RefreshCw size={20} />, salir: <LogOut size={20} />, perfil: <User size={20} />, preferencias: <Settings size={20} />, 
   nuevoGym: <Building2 size={20} />, gestionGyms: <Settings size={20} />, reciboManual: <Receipt size={20} />, crearRutinaGeneral: <BookOpen size={20} />,
   tienda: <ShoppingBag size={20} />, rutinasUsuarios: <FileText size={20} />, asistencia: <CheckSquare size={20} />, frases: <MessageSquare size={20} />, gastos: <Wallet size={20} />, notas: <ClipboardList size={20} />,
-  dietas: <Salad size={20} />
+  dietas: <Salad size={20} />, version: <Smartphone size={20} />
 };
 
 const TabLoading = () => (
@@ -89,7 +91,8 @@ export const Home = () => {
   const { currentUser, isEntrenador, isAdmin, isLoading, metrics, logout } = useOptimizedHome();  
 
   // Registrar Push Notifications (si estamos en celular y hay usuario)
-  usePushNotifications(currentUser);
+  // Si el usuario no tiene fcmToken guardado, espera unos segundos para guardarlo antes de cargar el resto
+  const { isCheckingPush } = usePushNotifications(currentUser);
 
   // ESTADOS ADMIN
   const [activeTab, setActiveTab] = useState("Inicio");
@@ -100,8 +103,8 @@ export const Home = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const swiperRef = useRef<any>(null);
 
-  // Verificamos si está vencido para ocultar navegación
-  const { activePlans, isUserExpired, loading: loadingPlans } = useUserPlan();
+  // Verificamos si está vencido para ocultar navegación (espera a que termine el chequeo de fcmToken en móvil)
+  const { activePlans, isUserExpired, loading: loadingPlans } = useUserPlan(!isLoading && !isCheckingPush && !!currentUser);
   
   const [visitedSlides, setVisitedSlides] = useState<Set<number>>(new Set([0]));
 
@@ -121,6 +124,41 @@ export const Home = () => {
       currentUser?.gym?.id,
       currentUser?.gym?.codigoAcceso
   );
+
+  // Verificación de última versión de la app (Solo en Android/iOS para rol Alumno)
+  const [showUpdateAppModal, setShowUpdateAppModal] = useState(false);
+  const [dismissedUpdateModal, setDismissedUpdateModal] = useState(false);
+  const [installedAppVersion, setInstalledAppVersion] = useState<string>("");
+
+  useEffect(() => {
+    if (!currentUser || currentUser.rol !== 'Alumno' || dismissedUpdateModal) {
+      return;
+    }
+
+    const latestVersion = currentUser.gym?.ultimaVersionApp;
+    if (!latestVersion) return;
+
+    let active = true;
+    getCurrentAppVersion().then((currentVer) => {
+      // Si es null significa que estamos en Web/PC y no hace falta comprobar
+      if (!active || !currentVer) return;
+      setInstalledAppVersion(currentVer);
+      if (isVersionOutdated(currentVer, latestVersion)) {
+        setShowUpdateAppModal(true);
+      } else {
+        setShowUpdateAppModal(false);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [currentUser?.id, currentUser?.rol, currentUser?.gym?.ultimaVersionApp, dismissedUpdateModal]);
+
+  const handleCloseUpdateModal = () => {
+    setShowUpdateAppModal(false);
+    setDismissedUpdateModal(true);
+  };
 
   const handleEditRoutine = (id: number) => {
       setRoutineIdToEdit(id);
@@ -162,7 +200,7 @@ export const Home = () => {
     }
   };
 
-  if (isLoading || loadingPlans) return <div className="min-h-screen flex items-center justify-center bg-gray-900"><p className="text-white animate-pulse">Cargando...</p></div>;
+  if (isLoading || isCheckingPush || loadingPlans) return <div className="min-h-screen flex items-center justify-center bg-gray-900"><p className="text-white animate-pulse">Cargando...</p></div>;
   if (!currentUser) return null; 
 
   if (isUserExpired && currentUser?.rol === 'Alumno') {
@@ -241,6 +279,7 @@ export const Home = () => {
                         case "Productos": return <ProductosManager />;
                         case "Asistencia Manual": return <AsistenciaManual />;
                         case "Frases": return <FrasesManager />;
+                        case "Aumentar Versión": return <AppVersionManager />;
                         default: return <AdminDashboardWelcome />;
                     }
                 })()}
@@ -328,6 +367,7 @@ export const Home = () => {
                     <SidebarItem icon={Icons.frases} label="Frases" active={activeTab === "Frases"} onClick={() => handleSidebarClick("Frases")} />
                     <SidebarItem icon={Icons.nuevoGym} label="Nuevo Gimnasio" active={activeTab === "Nuevo Gimnasio"} onClick={() => handleSidebarClick("Nuevo Gimnasio")} />
                     <SidebarItem icon={Icons.gestionGyms} label="Gestión Gimnasios" active={activeTab === "Gestión Gimnasios"} onClick={() => handleSidebarClick("Gestión Gimnasios")} />
+                    <SidebarItem icon={Icons.version} label="Aumentar Versión" active={activeTab === "Aumentar Versión"} onClick={() => handleSidebarClick("Aumentar Versión")} />
                   </>
                 )}
               </nav>
@@ -356,6 +396,38 @@ export const Home = () => {
     <BackgroundLayout>
       
         <NavbarSuperior />
+
+        {/* MODAL DE ACTUALIZACIÓN DISPONIBLE (SOLO ALUMNOS CON VERSIÓN DESACTUALIZADA) */}
+        {showUpdateAppModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in">
+            <div className="w-full max-w-sm bg-gradient-to-b from-[#1e152a] to-[#130d1c] border border-green-500/30 rounded-3xl p-6 shadow-2xl text-center relative overflow-hidden">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-green-500/15 border border-green-500/30 flex items-center justify-center text-green-400">
+                <RefreshCw className="w-7 h-7" />
+              </div>
+
+              <h3 className="text-xl font-extrabold text-white mb-2">
+                ¡Nueva versión disponible!
+              </h3>
+
+              <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                Hay una nueva actualización de <span className="text-green-400 font-semibold">GymMate</span> disponible en la tienda. Actualizá la aplicación desde Play Store o App Store para disfrutar de las últimas mejoras.
+              </p>
+
+              <div className="bg-white/5 border border-white/10 rounded-xl py-2 px-4 mb-5 inline-flex items-center gap-3 text-xs font-mono">
+                <span className="text-gray-400">Tu versión: <strong className="text-gray-200">v{installedAppVersion}</strong></span>
+                <span className="text-gray-600">→</span>
+                <span className="text-green-400">Nueva: <strong>v{currentUser?.gym?.ultimaVersionApp}</strong></span>
+              </div>
+
+              <button
+                onClick={handleCloseUpdateModal}
+                className="w-full bg-green-600 hover:bg-green-500 active:scale-[0.98] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-green-600/20"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        )}
       
       <div className="h-screen w-screen overflow-hidden relative">
         <Swiper

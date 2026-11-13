@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { PlansApi, type UserPlanDTO } from "../../API/Planes/PlansApi";
 
-export const useUserPlan = () => {
+export const useUserPlan = (enabled: boolean = true) => {
     // Ahora 'activePlans' es un array
     const [activePlans, setActivePlans] = useState<UserPlanDTO[]>([]);
     const [isUserExpired, setIsUserExpired] = useState(false);
@@ -9,8 +9,9 @@ export const useUserPlan = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!enabled) return;
         fetchMyPlans();
-    }, []);
+    }, [enabled]);
 
     const fetchMyPlans = async () => {
         setLoading(true);

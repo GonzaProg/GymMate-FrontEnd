@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProfile } from "../../Hooks/Profile/useProfile";
 import { useLogout } from "../../Hooks/Login/useLogout"; // Importamos el hook de logout
 import { Input } from "../../Components/UI/Input";
@@ -6,6 +6,7 @@ import { Button } from "../../Components/UI/Button";
 import { AppStyles } from "../../Styles/AppStyles"; 
 import { ProfileStyles } from "../../Styles/ProfileStyles"; 
 import { formatearFechaUTC } from "../../Helpers/DateUtils";
+import { getCurrentAppVersion } from "../../Config/AppVersion";
 import { Camera, Edit2, Lock, AlertTriangle, ChevronDown, ChevronUp, LogOut } from "lucide-react";
 
 interface ProfileProps {
@@ -15,6 +16,13 @@ interface ProfileProps {
 export const Profile = ({ isMobile = false }: ProfileProps) => {
   const { logout } = useLogout();
   const [showDangerZone, setShowDangerZone] = useState(false);
+  const [installedMobileVersion, setInstalledMobileVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    getCurrentAppVersion().then((ver) => {
+      setInstalledMobileVersion(ver);
+    });
+  }, []);
   
   const { 
     loading, 
@@ -291,6 +299,15 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
                        Salir
                     </button>
                 </div>
+            </div>
+          )}
+
+          {/* PIE DE PÁGINA: VERSIÓN ACTUAL DE LA APP (SOLO VISTA DE ALUMNO EN CELULAR, OCULTO EN WEB) */}
+          {userData.rol === 'Alumno' && installedMobileVersion && (
+            <div className="pt-2 pb-6 text-center">
+              <p className="text-xs text-white font-mono tracking-wider">
+                Versión de la app: v{installedMobileVersion}
+              </p>
             </div>
           )}
 

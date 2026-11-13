@@ -13,8 +13,9 @@ export interface User {
     email?: string;
     gmail?: string;
     fotoPerfil?: string;
-    rol: string; 
+    rol: string;
     token?: string;
+    fcmTokens?: string[];
     gym?: {
         id: number;
         nombre?: string;
@@ -22,6 +23,7 @@ export interface User {
         moduloAsistencia?: boolean;
         logoUrl?: string;
         fondoInicioCelularUrl?: string;
+        ultimaVersionApp?: string;
     };
 }
 
@@ -32,7 +34,7 @@ export const useOptimizedHome = () => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
-    
+
     // Refs para evitar múltiples llamadas
     const authLoadedRef = useRef(false);
     const metricsLoadedRef = useRef(false);
@@ -60,14 +62,42 @@ export const useOptimizedHome = () => {
                 const admin = userObj.rol === "Admin";
                 setIsAdmin(admin);
                 setIsEntrenador(userObj.rol === "Entrenador" || admin);
-                
+
                 // Cargar métricas solo después de tener el usuario
                 loadMetrics(userObj.rol);
 
                 // Actualizar última conexión al abrir la app o entrar con sesión recordada
-                UsuarioApi.actualizarUltimaConexion().catch((err) => {
-                    console.error("Error actualizando última conexión:", err);
-                });
+                // y sincronizar fcmTokens y ultimaVersionApp desde la base de datos
+                UsuarioApi.actualizarUltimaConexion()
+                    .then((res) => {
+                            if (res) {
+                                const storage = localStorage.getItem("user") ? localStorage : sessionStorage;
+                                const storedStr = storage.getItem("user");
+                                if (storedStr) {
+                                    const parsed = JSON.parse(storedStr);
+                                    if (Array.isArray(res.fcmTokens)) {
+                                        parsed.fcmTokens = res.fcmTokens;
+                                    }
+                                    if (res.ultimaVersionApp && parsed.gym) {
+                                        parsed.gym.ultimaVersionApp = res.ultimaVersionApp;
+                                    }
+                                    storage.setItem("user", JSON.stringify(parsed));
+                                }
+                                setCurrentUser((prev) => {
+                                    if (!prev) return prev;
+                                    return {
+                                        ...prev,
+                                        fcmTokens: Array.isArray(res.fcmTokens) ? res.fcmTokens : prev.fcmTokens,
+                                        gym: prev.gym
+                                            ? { ...prev.gym, ultimaVersionApp: res.ultimaVersionApp || prev.gym.ultimaVersionApp }
+                                            : prev.gym
+                                    };
+                                });
+                            }
+                        })
+                    .catch((err) => {
+                        console.error("Error actualizando última conexión:", err);
+                    });
 
             } catch (error) {
                 console.error("Error sesión:", error);
@@ -92,7 +122,7 @@ export const useOptimizedHome = () => {
 
     const login = (user: User, accessToken: string, refreshToken: string, remember: boolean = true) => {
         const storage = remember ? localStorage : sessionStorage;
-        
+
         storage.setItem("token", accessToken);
         storage.setItem("refreshToken", refreshToken);
         storage.setItem("user", JSON.stringify(user));
@@ -102,7 +132,7 @@ export const useOptimizedHome = () => {
         const admin = user.rol === "Admin";
         setIsAdmin(admin);
         setIsEntrenador(user.rol === "Entrenador" || admin);
-        
+
         // Resetear métricas para que se carguen con el nuevo rol
         metricsLoadedRef.current = false;
         loadMetrics(user.rol);
@@ -124,7 +154,7 @@ export const useOptimizedHome = () => {
         setCurrentUser(null);
         setToken(null);
         setMetrics(null);
-        
+
         // Resetear refs para futuras sesiones
         authLoadedRef.current = false;
         metricsLoadedRef.current = false;
@@ -132,9 +162,9 @@ export const useOptimizedHome = () => {
         navigate("/login", { replace: true });
     };
 
-    return { 
+    return {
         isAdmin,
-        isEntrenador, 
+        isEntrenador,
         currentUser,
         token,
         isLoading,

@@ -14,6 +14,7 @@ export interface GymDTO {
     fraseConcurrenciaBaja?: string;
     fraseConcurrenciaMedia?: string;
     fraseConcurrenciaAlta?: string;
+    ultimaVersionApp?: string;
 }
 
 // Interfaz para ACTUALIZAR datos
@@ -25,7 +26,7 @@ export interface CreateUpdateGymDTO {
 }
 
 export interface GymPreferencesDTO {
-    envioAutomaticoCumpleanos?: boolean; 
+    envioAutomaticoCumpleanos?: boolean;
     envioAutomaticoRecibos?: boolean;
     mensajeCumpleanos?: string;
     mensajeInactividad?: string;
@@ -38,6 +39,7 @@ export interface GymPreferencesDTO {
     fraseConcurrenciaBaja?: string;
     fraseConcurrenciaMedia?: string;
     fraseConcurrenciaAlta?: string;
+    ultimaVersionApp?: string;
 }
 
 export const GymApi = {
@@ -55,7 +57,7 @@ export const GymApi = {
 
     getByCode: async (code: string) => {
         const response = await api.get(`/gyms/by-code/${code}`);
-        return response.data; 
+        return response.data;
     },
 
     // 3. Bloquear / Desbloquear
@@ -84,7 +86,7 @@ export const GymApi = {
         const response = await api.get('/gyms/preferences');
         return response.data;
     },
-    
+
     updatePreferences: async (data: GymPreferencesDTO) => {
         const response = await api.put("/gyms/preferences", data);
         return response.data;
@@ -92,6 +94,16 @@ export const GymApi = {
 
     verifyFinancePassword: async (password: string) => {
         const response = await api.post("/gyms/verify-finance-password", { password });
+        return response.data;
+    },
+
+    getAppVersion: async (): Promise<{ ultimaVersionApp: string }> => {
+        const response = await api.get("/gyms/app-version");
+        return response.data;
+    },
+
+    cambiarVersionApp: async (accion: 'subir' | 'bajar'): Promise<{ ultimaVersionApp: string }> => {
+        const response = await api.patch("/gyms/app-version", { accion });
         return response.data;
     }
 };

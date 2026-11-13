@@ -32,7 +32,8 @@ export interface LoginResponse {
         rol: string;
         gmail?: string;
         fotoPerfil?: string;
-        gym?: { // <--- Info del gym
+        fcmTokens?: string[];
+        gym?: {
             id: number;
             nombre: string;
             logoUrl?: string;
@@ -40,6 +41,7 @@ export interface LoginResponse {
             codigoAcceso: string;
             moduloAsistencia?: boolean;
             tieneMercadoPago?: boolean;
+            ultimaVersionApp?: string;
         };
     };
 }

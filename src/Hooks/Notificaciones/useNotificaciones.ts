@@ -106,10 +106,14 @@ export const useNotificaciones = () => {
     }
   };
 
-  // Cargar al montar el hook
+  // Cargar al montar el hook y escuchar evento de push recibido
   useEffect(() => {
     fetchNotificaciones();
-    // Opcional: Podrías poner un setInterval aquí para polling cada 60s
+    const handlePushReceived = () => fetchNotificaciones();
+    window.addEventListener("push-notification-received", handlePushReceived);
+    return () => {
+      window.removeEventListener("push-notification-received", handlePushReceived);
+    };
   }, [fetchNotificaciones]);
 
   return {
