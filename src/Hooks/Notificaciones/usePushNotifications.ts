@@ -1,7 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { Capacitor, type PluginListenerHandle } from '@capacitor/core';
+import { App } from '@capacitor/app';
 import { PushNotifications, type Token, type ActionPerformed, type PushNotificationSchema } from '@capacitor/push-notifications';
 import { UsuarioApi } from '../../API/Usuarios/UsuarioApi';
+
+const clearDeliveredPushNotifications = async () => {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    await PushNotifications.removeAllDeliveredNotifications();
+  } catch (error) {
+    console.warn('No se pudieron limpiar las notificaciones entregadas:', error);
+  }
+};
 
 const checkUserMissingFcmToken = (user: any): boolean => {
   if (!Capacitor.isNativePlatform()) return false;
@@ -128,10 +138,21 @@ export const usePushNotifications = (currentUser: any) => {
         });
         listenerHandles.push(recvHandle);
 
-        const actionHandle = await PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
+        const actionHandle = await PushNotifications.addListener('pushNotificationActionPerformed', async (notification: ActionPerformed) => {
           console.log('Push action performed:', notification);
+          await clearDeliveredPushNotifications();
         });
         listenerHandles.push(actionHandle);
+
+        const appStateHandle = await App.addListener('appStateChange', ({ isActive }) => {
+          if (isActive) {
+            void clearDeliveredPushNotifications();
+          }
+        });
+        listenerHandles.push(appStateHandle);
+
+        // Limpiar notificaciones pendientes y badge al abrir la app
+        await clearDeliveredPushNotifications();
 
         // 2. Comprobamos y solicitamos permisos (contemplando 'prompt' y 'prompt-with-rationale')
         let permStatus = await PushNotifications.checkPermissions();
