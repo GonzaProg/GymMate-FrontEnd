@@ -100,7 +100,8 @@ export const Login = () => {
                                 maxLength={4}
                                 value={areaCode} 
                                 onChange={(e) => {
-                                    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                                    // Quita caracteres no numéricos y el 0 inicial (ej: 0343 -> 343, 011 -> 11)
+                                    const val = e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 4);
                                     setAreaCode(val);
                                     handleChange({ target: { name: 'telefono', value: `${val}${phoneNumber}` } } as any);
                                 }} 
@@ -109,17 +110,21 @@ export const Login = () => {
                             <Input 
                                 placeholder="Número" 
                                 type="tel" 
-                                maxLength={6}
+                                maxLength={10}
                                 value={phoneNumber} 
                                 onChange={(e) => {
-                                    const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                                    // Permite 6, 7 u 8 dígitos según característica (4+6, 3+7 o 2+8) y quita el 15 inicial si lo escriben
+                                    let val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                    if (val.startsWith('15') && areaCode.length + val.length === 12) {
+                                        val = val.slice(2);
+                                    }
                                     setPhoneNumber(val);
                                     handleChange({ target: { name: 'telefono', value: `${areaCode}${val}` } } as any);
                                 }} 
                                 className={`${LoginStyles.inputDark} flex-1`} 
                             />
                         </div>
-                        <span className="text-[13px] text-gray-400 mt-1.5 block ml-1">Ej: +54 3445 458767</span>
+                        <span className="text-[13px] text-gray-400 mt-1.5 block ml-1">Sin 0 ni 15 (10 dígitos). Ej: 3445 458767 o 343 4527343</span>
                     </div>
                 </div>
                 
