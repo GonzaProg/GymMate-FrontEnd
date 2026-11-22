@@ -365,8 +365,8 @@ export const MyRoutines = () => {
       {/* VARIANTES MODAL */}
       {variantesState && (
           typeof document !== "undefined" ? createPortal(
-              <div className="fixed inset-0 z-[1000] flex flex-col bg-black/95 backdrop-blur-md animate-fade-in">
-                  <div className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-xl border-b border-white/10 px-4 py-4 shrink-0 shadow-lg">
+              <div className="fixed inset-0 z-[1000] flex flex-col bg-black/95 backdrop-blur-md animate-fade-in pb-safe">
+                  <div className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-xl border-b border-white/10 px-4 pb-4 pt-safe-offset shrink-0 shadow-lg">
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-900"></div>
                       <div className="flex items-center gap-4 mt-2">
                           <button 

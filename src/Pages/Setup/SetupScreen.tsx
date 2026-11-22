@@ -43,7 +43,7 @@ export const SetupScreen = () => {
             </div>
             <h1 className="text-3xl font-bold text-white drop-shadow-md">Configuración</h1>
             <p className="text-gray-300 mt-2 text-sm px-4">
-              Esta terminal aún no está vinculada. Ingresa el <b>Código de Acceso</b> de tu gimnasio.
+              Este dispositivo aún no está vinculado. Ingresa el <b>Código de Acceso</b> de tu gimnasio.
             </p>
           </div>
 
@@ -63,14 +63,8 @@ export const SetupScreen = () => {
             {error && <div className={AppStyles.errorBox}>{error}</div>}
 
             <Button type="button" onClick={handleSaveConfig} disabled={loading} className={`${AppStyles.btnPrimary} w-full`}>
-              {loading ? "VINCULANDO..." : "VINCULAR TERMINAL"}
+              {loading ? "VINCULANDO..." : "VINCULAR"}
             </Button>
-          </div>
-          
-          <div className="mt-6 text-center">
-             <p className="text-xs text-gray-500">
-                Este código vincula esta PC con tu base de datos en la nube.
-             </p>
           </div>
         </Card>
       </div>

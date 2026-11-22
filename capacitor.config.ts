@@ -18,6 +18,9 @@ const config: CapacitorConfig = {
     PushNotifications: {
       presentationOptions: ["sound", "alert"],
     },
+    SystemBars: {
+      insetsHandling: "css",
+    },
   },
 };
 

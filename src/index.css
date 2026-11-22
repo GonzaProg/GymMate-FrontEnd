@@ -3,16 +3,44 @@
 @tailwind utilities;
 
 @layer utilities {
+  /* Compatibilidad total iOS (env) + Android 15/16 Capacitor SystemBars (--safe-area-inset-*) */
   .pt-safe {
-    padding-top: env(safe-area-inset-top);
+    padding-top: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px));
   }
   .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
   }
   .pl-safe {
-    padding-left: env(safe-area-inset-left);
+    padding-left: max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px));
   }
   .pr-safe {
-    padding-right: env(safe-area-inset-right);
+    padding-right: max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px));
+  }
+
+  .top-safe {
+    top: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px));
+  }
+  .bottom-safe {
+    bottom: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
+  }
+  .left-safe {
+    left: max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px));
+  }
+  .right-safe {
+    right: max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px));
+  }
+
+  /* Margen seguro + separación extra cómoda para botones flotantes (cerrar video, modales, etc.) */
+  .top-safe-offset {
+    top: calc(max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px)) + 1.75rem);
+  }
+  .right-safe-offset {
+    right: calc(max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px)) + 1.25rem);
+  }
+  .left-safe-offset {
+    left: calc(max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px)) + 1rem);
+  }
+  .pt-safe-offset {
+    padding-top: calc(max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px)) + 1.5rem);
   }
 }
