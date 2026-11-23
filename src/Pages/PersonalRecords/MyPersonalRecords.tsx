@@ -244,11 +244,11 @@ export const MyPersonalRecords = () => {
             </div>
 
             {videoSeleccionado && createPortal(
-                <div className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex flex-col p-4 animate-fade-in">
-                    <div className="flex justify-end pb-4 pt-8">
+                <div className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex flex-col px-4 pb-4 pb-safe pl-safe pr-safe animate-fade-in">
+                    <div className="flex justify-end pb-4 pt-safe-offset">
                         <button 
                             onClick={() => setVideoSeleccionado(null)}
-                            className="text-white flex items-center gap-2 bg-white/10 hover:bg-white/20 p-2 rounded-full px-5 font-bold transition-colors"
+                            className="text-white flex items-center gap-2 bg-white/15 hover:bg-red-500/80 py-2.5 px-5 rounded-full font-bold transition-colors border border-white/20 shadow-lg touch-manipulation"
                         >
                             Cerrar <X className="w-4 h-4"/>
                         </button>

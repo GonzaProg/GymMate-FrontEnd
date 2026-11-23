@@ -37,6 +37,10 @@ export const useRegister = (onSuccess: () => void) => {
         if (!formData.telefono) {
             return showError("⚠️ Falta completar el número de teléfono.");
         }
+        const soloDigitosTel = formData.telefono.replace(/\D/g, '').replace(/^0+/, '');
+        if (soloDigitosTel.length < 10 || soloDigitosTel.length > 13) {
+            return showError("⚠️ El teléfono debe tener 10 dígitos (característica sin 0 + número sin 15). Ej: 3434527343 o 3445458425.");
+        }
         if (formData.gmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.gmail)) {
             return showError("⚠️ El correo electrónico no tiene un formato válido.");
         }
