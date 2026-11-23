@@ -2,8 +2,11 @@ import { useState } from "react";
 import { AuthApi } from "../../API/Auth/AuthApi";
 import { useNavigate } from "react-router-dom";
 import { showSuccess, showError } from "../../Helpers/Alerts";
+import { useGymConfig } from "../../Context/GymConfigContext";
+
 export const useRecoverPassword = () => {
     const navigate = useNavigate();
+    const { gymCode } = useGymConfig();
     
     // Pasos: 1 = Seleccionar Método, 2 = Pedir DNI, 3 = Pedir Código y Clave
     const [step, setStep] = useState(1);
@@ -32,8 +35,8 @@ export const useRecoverPassword = () => {
         setLoading(true);
         setError(null);
         try {
-            // Guardamos la respuesta de la API
-            const response = await AuthApi.forgotPassword(dni, metodo); 
+            // Guardamos la respuesta de la API (incluyendo gymCode para evitar colisiones si el DNI está en varios gyms)
+            const response = await AuthApi.forgotPassword(dni.trim(), metodo, gymCode || undefined); 
             
             // Guardamos el destino recibido para mostrarlo
             if (response.destino || response.telefono) {
@@ -42,9 +45,9 @@ export const useRecoverPassword = () => {
             
             setStep(3); 
         } catch (err: any) {
-            setError(err.response?.data?.error || "Error al enviar código.");
-            if (err.response?.data?.error === "El usuario no tiene un correo electrónico registrado.") {
-                 // Dejar que el error se muestre en el catch o podemos usar showError
+            const msg = err.response?.data?.error || "Error al enviar código.";
+            setError(msg);
+            if (msg.includes("no tiene un correo electrónico")) {
                  showError("No tienes un correo registrado. Contacta a la administración o usa WhatsApp.");
             }
         } finally {

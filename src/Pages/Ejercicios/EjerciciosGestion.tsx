@@ -277,8 +277,8 @@ export const EjerciciosGestion = ({ onNavigate }: Props) => {
                 document.body
             )}
             {videoUrl && createPortal(
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4">
-                    <button onClick={() => setVideoUrl(null)} className="absolute top-4 right-4 md:top-6 md:right-6 z-[10000] p-2 bg-black/50 hover:bg-black/80 rounded-full text-white transition-colors border border-white/10 w-10 h-10 flex items-center justify-center">
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4 pt-safe pb-safe">
+                    <button onClick={() => setVideoUrl(null)} className="absolute top-safe-offset right-safe-offset z-[10000] p-2 bg-black/60 hover:bg-red-500/80 rounded-full text-white transition-colors border border-white/20 w-12 h-12 flex items-center justify-center shadow-lg backdrop-blur-md touch-manipulation">
                         <X className="w-6 h-6" />
                     </button>
                     <div className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden border border-white/20">

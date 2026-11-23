@@ -236,7 +236,7 @@ export const VideoEjercicio = ({ url, fallbackUrl, controls = false, muted = tru
                       />
                       <button 
                           onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
-                          className="absolute top-4 left-4 z-50 p-2 bg-black/50 hover:bg-black/80 rounded-full text-white transition-colors border border-white/10 flex items-center justify-center"
+                          className={`absolute ${isFullscreen ? 'top-safe-offset left-safe-offset' : 'top-4 left-4'} z-50 p-2 bg-black/50 hover:bg-black/80 rounded-full text-white transition-colors border border-white/10 flex items-center justify-center`}
                           title={isFullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
                       >
                           {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}

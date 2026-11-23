@@ -82,10 +82,10 @@ export const YearlyPaymentMatrix = ({ onBack, onSelectUserForHistory }: YearlyPa
             
             {/* Modal de Comprobante */}
             {showReceiptModal && selectedReceiptUrl && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4" onClick={() => setShowReceiptModal(false)}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 pt-safe pb-safe" onClick={() => setShowReceiptModal(false)}>
                     
                     {/* Controles Top/Right */}
-                    <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-3 z-[60]" onClick={e => e.stopPropagation()}>
+                    <div className="absolute top-safe-offset right-safe-offset flex items-center gap-3 z-[60]" onClick={e => e.stopPropagation()}>
                         <button 
                             onClick={async (e) => {
                                 e.stopPropagation();

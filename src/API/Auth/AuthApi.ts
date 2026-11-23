@@ -65,8 +65,8 @@ export const AuthApi = {
     },
 
     // Solicitar recuperación
-    forgotPassword: async (dni: string, metodo: 'whatsapp' | 'email') => {
-        const response = await api.post('/auth/forgot-password', { dni, metodo });
+    forgotPassword: async (dni: string, metodo: 'whatsapp' | 'email', codigoGym?: string) => {
+        const response = await api.post('/auth/forgot-password', { dni, metodo, codigoGym });
         return response.data;
     },
 

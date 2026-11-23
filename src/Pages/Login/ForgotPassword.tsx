@@ -33,7 +33,16 @@ export const ForgotPassword = () => {
                 ? "¿Por dónde deseas recibir el código?" 
                 : step === 2
                 ? `Ingresa tu DNI para recibir un código por ${metodo === 'whatsapp' ? 'WhatsApp' : 'Correo'}.`
-                : <span>Hemos enviado un código al destino <b className="text-green-400">{destinoRecuperacion}</b>.</span>
+                : (
+                  <>
+                    <span>Hemos enviado un código al destino <b className="text-green-400">{destinoRecuperacion}</b>.</span>
+                    {metodo === 'email' && (
+                      <span className="block text-xs text-gray-400 mt-1.5">
+                        Si no lo ves en tu bandeja de entrada, revisá la carpeta de Spam o Correo no deseado.
+                      </span>
+                    )}
+                  </>
+                )
               }
             </p>
           </div>
