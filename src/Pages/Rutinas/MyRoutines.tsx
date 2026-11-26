@@ -10,6 +10,8 @@ import { showSuccess, showError } from "../../Helpers/Alerts";
 import { EjerciciosApi, type Ejercicio } from "../../API/Ejercicios/EjerciciosApi";
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import RegaloAbierto from "../../assets/Navidad/RegaloAbierto.png";
+import RegaloCerrado from "../../assets/Navidad/RegaloCerrado.png";
 
 import { createPortal } from "react-dom";
 import { Inbox, CloudDownload, CheckCircle, Download, Search, Dumbbell, ArrowLeft, Play, Activity, Hand, Info, Calendar, Edit2, Save, X } from "lucide-react";
@@ -598,7 +600,7 @@ export const MyRoutines = () => {
                       </div>
 
                       <div className="flex-1 flex flex-col justify-between w-full">
-                          <div className="flex justify-between items-start mb-4">
+                          <div className="flex justify-between items-start mb-8">
                               <div className="flex flex-col gap-1 w-full mr-2">
                                   <div className="flex items-center gap-3">
                                       <span className={`${isSuperserie ? 'bg-red-900/50 text-red-400 border-red-500/20' : 'bg-green-900/50 text-green-400 border-green-500/20'} text-xs font-bold px-2 py-1 rounded border`}>#{i + 1}</span>
@@ -627,13 +629,13 @@ export const MyRoutines = () => {
                                   {!editValues[d.id] && !isRoutineEditMode && (
                                       <button 
                                           onClick={() => toggleExerciseCheck(routineIdForCheck, d.ejercicio.id, i)}
-                                          className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ml-2 ${
-                                              isChecked 
-                                              ? 'bg-green-500 border-green-400 text-black shadow-[0_0_15px_rgba(34,197,94,0.4)]' 
-                                              : 'bg-black/40 border-white/20 text-transparent hover:border-green-500/50 hover:bg-white/5 backdrop-blur-sm'
-                                          }`}                                      >
-                                          
-                                          <span className="text-xl leading-none font-bold select-none">{isChecked ? '✓' : ''}</span>
+                                          className="w-12 h-12 flex items-center justify-center transition-all flex-shrink-0 ml-2 hover:scale-110 active:scale-95"
+                                      >
+                                          {isChecked ? (
+                                              <img src={RegaloAbierto} alt="Completado" className="mt-6 w-18 h-18 md:w-12 md:h-12 object-contain drop-shadow-[0_0_8px_rgba(255,153,0,0.6)]" />
+                                          ) : (
+                                              <img src={RegaloCerrado} alt="Pendiente" className="mt-6 w-18 h-18 md:w-12 md:h-12 object-contain opacity-40 grayscale-[0.8] contrast-75 hover:grayscale-0 hover:opacity-100 transition-all" />
+                                          )}
                                       </button>
                                   )}
                               </div>

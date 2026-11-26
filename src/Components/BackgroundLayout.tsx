@@ -1,104 +1,191 @@
-import React, { useState, useEffect } from 'react'; // <-- Agregamos useState y useEffect
+import React, { useState, useEffect, useMemo } from 'react';
 
 interface BackgroundLayoutProps {
   children: React.ReactNode;
   className?: string;
 }
 
-// 1. ICONO MANCUERNA
-const DumbbellIcon = ({ style }: { style: React.CSSProperties }) => (
-  <div style={style} className="text-white/50"> 
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="1.5"
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      width="100%" 
-      height="100%"
-    >
-      {/* Barra central */}
-      <rect x="7" y="11" width="10" height="2" rx="0.5" />
+interface SnowflakeConfig {
+  id: number;
+  left: number;
+  size: number;
+  opacity: number;
+  fallDuration: number;
+  fallDelay: number;
+  swayDuration: number;
+  swayDelay: number;
+  swayDistance: number;
+  spinDuration: number;
+  spinReverse: boolean;
+  variant: 'detailed' | 'simple';
+  color: string;
+}
 
-      {/* 1. Discos GRANDES (Los más cercanos al centro) */}
-      <rect x="5" y="6" width="2" height="12" rx="1" />
-      <rect x="17" y="6" width="2" height="12" rx="1" />
+interface SwayCSSProperties extends React.CSSProperties {
+  '--sway-distance': string;
+}
 
-      {/* 2. Discos MEDIANOS */}
-      <rect x="3" y="7.5" width="2" height="9" rx="0.5" />
-      <rect x="19" y="7.5" width="2" height="9" rx="0.5" />
+const SNOWFLAKE_ANGLES = [0, 60, 120, 180, 240, 300] as const;
+const SNOWFLAKE_COLORS = ['#ffffff', '#f0f9ff', '#e0f2fe'] as const;
 
-      {/* 3. Discos PEQUEÑOS (Los de los extremos) */}
-      <rect x="1" y="9" width="2" height="6" rx="0.5" />
-      <rect x="21" y="9" width="2" height="6" rx="0.5" />
-    </svg>
-  </div>
+// Generador determinista para mantener posiciones y velocidades estables entre re-renders
+const createSeededRandom = (seed: number) => {
+  let value = seed;
+  return () => {
+    value = (value * 1664525 + 1013904223) % 4294967296;
+    return value / 4294967296;
+  };
+};
+
+const generateSnowflakes = (count: number): SnowflakeConfig[] => {
+  const rand = createSeededRandom(20261225 + count);
+
+  return Array.from({ length: count }, (_, index) => {
+    // Profundidad simulada (0 = lejano/pequeño/lento, 1 = cercano/grande/rápido)
+    const depth = rand();
+    const size = Math.round((10 + depth * 18) * 10) / 10;
+    const opacity = Math.round((0.25 + depth * 0.6) * 100) / 100;
+    const rawFallDuration = 17 - depth * 9.5 + (rand() - 0.5) * 2;
+    const fallDuration = Math.round(Math.min(19, Math.max(6.5, rawFallDuration)) * 10) / 10;
+    const fallDelay = Math.round(-rand() * fallDuration * 10) / 10;
+    const swayDuration = Math.round((3 + rand() * 3.5) * 10) / 10;
+    const swayDelay = Math.round(-rand() * swayDuration * 10) / 10;
+    const swayDistance = Math.round(12 + depth * 22);
+    const spinDuration = Math.round((8 + (1 - depth) * 10 + rand() * 4) * 10) / 10;
+
+    // Distribución estratificada horizontal para evitar huecos o acumulaciones
+    const left = Math.round((((index + 0.15 + rand() * 0.7) / count) * 100) * 100) / 100;
+
+    return {
+      id: index,
+      left,
+      size,
+      opacity,
+      fallDuration,
+      fallDelay,
+      swayDuration,
+      swayDelay,
+      swayDistance,
+      spinDuration,
+      spinReverse: rand() > 0.5,
+      variant: size >= 18 ? 'detailed' : 'simple',
+      color: SNOWFLAKE_COLORS[Math.floor(rand() * SNOWFLAKE_COLORS.length)],
+    };
+  });
+};
+
+// 1. ICONO COPO DE NIEVE
+const SnowflakeIcon = ({
+  size,
+  variant,
+  spinDuration,
+  spinReverse,
+}: {
+  size: number;
+  variant: 'detailed' | 'simple';
+  spinDuration: number;
+  spinReverse: boolean;
+}) => (
+  <svg
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={variant === 'detailed' ? '1.35' : '1.6'}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{
+      display: 'block',
+      width: `${size}px`,
+      height: `${size}px`,
+      transformOrigin: 'center',
+      animation: `snowSpin ${spinDuration}s linear infinite ${spinReverse ? 'reverse' : 'normal'}`,
+    }}
+  >
+    <circle cx="12" cy="12" r={variant === 'detailed' ? '2.4' : '1.8'} fill="currentColor" opacity="0.22" stroke="none" />
+    <circle cx="12" cy="12" r={variant === 'detailed' ? '1.1' : '0.9'} fill="currentColor" stroke="none" />
+
+    {SNOWFLAKE_ANGLES.map((angle) => (
+      <g key={angle} transform={`rotate(${angle} 12 12)`}>
+        {variant === 'detailed' ? (
+          <>
+            <line x1="12" y1="12" x2="12" y2="2" />
+            <path d="M9.7 4 L12 6.2 L14.3 4" />
+            <path d="M10.4 7.5 L12 9 L13.6 7.5" />
+          </>
+        ) : (
+          <>
+            <line x1="12" y1="12" x2="12" y2="3" />
+            <path d="M10.2 5.2 L12 7 L13.8 5.2" />
+          </>
+        )}
+      </g>
+    ))}
+  </svg>
 );
 
-export const BackgroundLayout: React.FC<BackgroundLayoutProps> = ({ children, className = "" }) => {
-  // --- NUEVO ESTADO PARA CANTIDAD DE MANCUERNAS ---
-  // Inicializamos en 4 (mobile first) por si acaso
-  const [dumbbellCount, setDumbbellCount] = useState(4);
+export const BackgroundLayout: React.FC<BackgroundLayoutProps> = ({ children, className = '' }) => {
+  // Mobile first para evitar lag en celulares
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : true
+  );
 
   useEffect(() => {
-    // Función para chequear el ancho
     const checkScreenSize = () => {
       // 768px es el breakpoint estándar entre celular y tablet/escritorio
-      if (window.innerWidth < 768) {
-        setDumbbellCount(4); // Celulares: 4 mancuernas para no dar lag
-      } else {
-        setDumbbellCount(8); // Escritorio: 8 mancuernas
-      }
+      setIsMobile(window.innerWidth < 768);
     };
 
-    // Ejecutamos una vez al cargar
-    checkScreenSize();
-
-    // Escuchamos si el usuario cambia el tamaño de la ventana (para PC)
     window.addEventListener('resize', checkScreenSize);
-    
-    // Limpiamos el evento al desmontar el componente
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
+  // Celulares: 24 copos livianos; Escritorio: 48 copos para cubrir pantallas anchas
+  const snowflakes = useMemo(() => generateSnowflakes(isMobile ? 24 : 48), [isMobile]);
+
   return (
     <div style={styles.container} className={className}>
-      {/* --- CAPA 0: NEON AURORA ANIMADA --- */}
+      {/* --- CAPA 0: NEON AURORA ANIMADA + LLUVIA DE NIEVE NAVIDEÑA --- */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        
         {/* Auroras */}
         <div style={styles.auroraNorth}></div>
         <div style={styles.auroraSouth}></div>
         <div style={styles.auroraEast}></div>
         <div style={styles.auroraWest}></div>
-        
-        {/* 2. MANCUERNAS PARPADEANTES DINÁMICAS */}
-        <div style={styles.starsContainer}>
 
-          {[...Array(dumbbellCount)].map((_, i) => { 
-            const randomSize = 20 + Math.random() * 25; 
-            const randomRotation = Math.random() * 360;
-            
+        {/* 2. LLUVIA DE COPOS DE NIEVE */}
+        <div style={styles.snowContainer} aria-hidden="true">
+          {snowflakes.map((flake) => {
+            const swayStyle: SwayCSSProperties = {
+              '--sway-distance': `${flake.swayDistance}px`,
+              animation: `snowSway ${flake.swayDuration}s ease-in-out ${flake.swayDelay}s infinite alternate`,
+            };
+
             return (
-              <DumbbellIcon 
-                key={i} 
+              <div
+                key={flake.id}
                 style={{
-                  ...styles.star,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  width: `${randomSize}px`,
-                  height: `${randomSize}px`,
-                  transform: `rotate(${randomRotation}deg)`,
-                  animationDelay: `${Math.random() * 5}s`,
-                  animationDuration: `${4 + Math.random() * 4}s`,
+                  ...styles.snowflakeFaller,
+                  left: `${flake.left}%`,
+                  opacity: flake.opacity,
+                  color: flake.color,
+                  animation: `snowFall ${flake.fallDuration}s linear ${flake.fallDelay}s infinite`,
                 }}
-              />
-            )
+              >
+                <div style={swayStyle}>
+                  <SnowflakeIcon
+                    size={flake.size}
+                    variant={flake.variant}
+                    spinDuration={flake.spinDuration}
+                    spinReverse={flake.spinReverse}
+                  />
+                </div>
+              </div>
+            );
           })}
         </div>
-        
+
         {/* Nebulosa central */}
         <div style={styles.nebula}></div>
       </div>
@@ -107,7 +194,7 @@ export const BackgroundLayout: React.FC<BackgroundLayoutProps> = ({ children, cl
       <div className="relative z-10 flex-1 flex flex-col w-full h-full">
         {children}
       </div>
-      
+
       {/* CSS Animaciones */}
       <style>{`
         @keyframes aurora {
@@ -116,9 +203,17 @@ export const BackgroundLayout: React.FC<BackgroundLayoutProps> = ({ children, cl
           50% { transform: translateY(10px) rotate(-1deg) scale(0.9); opacity: 0.4; }
           75% { transform: translateY(-10px) rotate(2deg) scale(1.05); opacity: 0.6; }
         }
-        @keyframes twinkle {
-          0%, 100% { opacity: 0; transform: scale(0.5); }
-          50% { opacity: 0.7; transform: scale(1); filter: drop-shadow(0 0 3px rgba(255,255,255,0.8)); }
+        @keyframes snowFall {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(0, calc(100vh + 80px), 0); }
+        }
+        @keyframes snowSway {
+          0% { transform: translate3d(calc(var(--sway-distance) * -1), 0, 0); }
+          100% { transform: translate3d(var(--sway-distance), 0, 0); }
+        }
+        @keyframes snowSpin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
         @keyframes pulse {
           0%, 100% { transform: scale(1); opacity: 0.2; }
@@ -187,16 +282,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     animation: 'aurora 22s infinite ease-in-out 4s',
     transform: 'rotate(-20deg)',
   },
-  starsContainer: {
+  snowContainer: {
     position: 'absolute',
     inset: 0,
+    overflow: 'hidden',
     pointerEvents: 'none',
   },
-  star: {
+  snowflakeFaller: {
     position: 'absolute',
-    animationName: 'twinkle',
-    animationIterationCount: 'infinite',
-    animationTimingFunction: 'ease-in-out',
+    top: '-40px',
   },
   nebula: {
     position: 'absolute',
