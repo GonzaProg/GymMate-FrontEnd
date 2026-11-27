@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthUser } from "../../Hooks/Auth/useAuthUser";
 import { useGymCachedImages } from "../../Hooks/StudentsHome/useGymCachedImages";
 import GorroNavidad from "../../assets/Navidad/GorroNavidad.svg";
-import AdornosNavbarSuperior from "../../assets/Navidad/AdornosNavbarSuperior.svg";
+import CampanasNavbarSuperior from "../../assets/Navidad/CampanasNavbarSuperior.svg";
 
 
 export const NavbarSuperior = () => {
@@ -34,7 +34,7 @@ export const NavbarSuperior = () => {
     <nav className="fixed w-full z-50 top-0 start-0 bg-gradient-to-b from-gray-900 via-gray-900/90 to-transparent pt-safe pb-8 transition-all">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 relative">
 
-        <img src={AdornosNavbarSuperior} alt="AdornosNavbarSuperior" className="absolute top-2 right-6 w-16 h-16 z-10" />
+        <img src={CampanasNavbarSuperior} alt="CampanasNavbarSuperior" className="absolute top-4 right-8 w-12 h-12 z-10" />
         
         {/* IZQUIERDA: LOGO MIXTO (TEXTO + IMAGEN) */}
         <div 

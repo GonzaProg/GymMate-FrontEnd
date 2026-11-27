@@ -17,6 +17,9 @@ import { AppLauncher } from '@capacitor/app-launcher';
 import { App as CapacitorApp } from '@capacitor/app';
 import { showError } from "../../Helpers/Alerts";
 import MpLogo from "../../assets/MP_RGB_HANDSHAKE_color_horizontal.svg";
+import AnilloStudentHome from "../../assets/Navidad/AnilloStudentHome.svg";
+import CoposDeNieve3 from "../../assets/Navidad/CoposDeNieve3.svg";
+import CoposDeNieve1 from "../../assets/Navidad/CoposDeNieve1.svg";
 
 export const StudentHome = ({ currentUser }: { currentUser: any }) => {
     const [loadingMP, setLoadingMP] = useState<number | null>(null);
@@ -152,7 +155,7 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
                 {/* Capa de Fondo */}
                 {fondoGymUrl && (
                     <div 
-                        className={`absolute inset-0 z-0 pointer-events-none bg-transparent bg-no-repeat bg-[length:100%_auto] ${currentUser?.gym?.tieneMercadoPago ? 'bg-[35%_20%]' : 'bg-[35%_10%]'}`}
+                        className={`absolute inset-0 z-0 pointer-events-none bg-transparent bg-no-repeat bg-[length:100%_auto] brightness-150 ${currentUser?.gym?.tieneMercadoPago ? 'bg-[35%_20%]' : 'bg-[35%_10%]'}`}
                         style={{ 
                             backgroundImage: `url(${fondoGymUrl})`,
                             WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 5%, black 90%, transparent)',
@@ -187,6 +190,9 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
 
                         return (
                             <div key={plan.userPlanId} className={`bg-black/50 p-5 rounded-3xl shadow-xl relative overflow-hidden group border border-white/5`}>
+                                
+                                <img src={AnilloStudentHome} alt="AnilloStudentHome" className="absolute top-6 right-6 w-20 h-20 z-10" />
+
                                 {/* Cabecera de la tarjeta */}
                                 <div className="flex items-center gap-4 mb-6">
                                     {gymLogo ? (
@@ -252,6 +258,9 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
                     {sortedNotificaciones.length > 0 && (
                         <div className={`${AppStyles.glassCard.replace("bg-gray-900/80", "bg-black/50")} mb-8 !p-4 border-white/5`}>
                             <div className="flex items-center justify-between mb-4 pr-2">
+                                
+                                <img src={CoposDeNieve3} alt="CoposDeNieve3" className="absolute -top-2 -right-2 w-24 h-24 z-10" />
+
                                 <h3 className="text-white font-bold text-lg flex items-center gap-2">
                                     <Megaphone className="w-7 h-7" />
                                     Tablón de Anuncios
@@ -305,6 +314,8 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
                     <div className={`${AppStyles.glassCard.replace("bg-gray-900/80", "bg-black/50")} relative overflow-hidden border-green-500/30 shadow-green-900/10`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-green-500/30 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                         
+                        <img src={CoposDeNieve1} alt="CoposDeNieve1" className="absolute bottom-0 left-0 w-24 h-24 z-10" />
+
                         {/* BOTÓN COMPACTO DE ESCANEO */}
                         <button 
                             onClick={() => setIsScannerOpen(true)}

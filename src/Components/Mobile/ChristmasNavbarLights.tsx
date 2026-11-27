@@ -165,6 +165,11 @@ const LEFT_SECONDARY_PATH = segmentsToSvgPath(LEFT_WIRE_SECONDARY);
 const RIGHT_PRIMARY_PATH = segmentsToSvgPath(RIGHT_WIRE_PRIMARY);
 const RIGHT_SECONDARY_PATH = segmentsToSvgPath(RIGHT_WIRE_SECONDARY);
 
+interface BulbBlinkConfig {
+  duration: number;
+  delay: number;
+}
+
 interface PositionedBulb {
   id: string;
   color: BulbColorKey;
@@ -175,8 +180,7 @@ interface PositionedBulb {
   angle: number;
   scale?: number;
   depth?: "fg" | "bg";
-  duration: number;
-  delay: number;
+  blink?: BulbBlinkConfig;
 }
 
 const buildTopBulb = (
@@ -186,9 +190,7 @@ const buildTopBulb = (
   t: number,
   color: BulbColorKey,
   angle: number,
-  duration: number,
-  delay: number,
-  options?: { scale?: number; depth?: "fg" | "bg" }
+  options?: { scale?: number; depth?: "fg" | "bg"; blink?: BulbBlinkConfig }
 ): PositionedBulb => {
   const pt = evalCubicBezier(wire[segIndex], t);
   return {
@@ -199,8 +201,7 @@ const buildTopBulb = (
     angle,
     scale: options?.scale ?? 1,
     depth: options?.depth ?? "fg",
-    duration,
-    delay,
+    blink: options?.blink,
   };
 };
 
@@ -211,9 +212,7 @@ const buildBottomBulb = (
   t: number,
   color: BulbColorKey,
   angle: number,
-  duration: number,
-  delay: number,
-  options?: { scale?: number; depth?: "fg" | "bg" }
+  options?: { scale?: number; depth?: "fg" | "bg"; blink?: BulbBlinkConfig }
 ): PositionedBulb => {
   const pt = evalCubicBezier(wire[segIndex], t);
   const fromBottom = 26 - pt.y;
@@ -225,8 +224,7 @@ const buildBottomBulb = (
     angle,
     scale: options?.scale ?? 1,
     depth: options?.depth ?? "fg",
-    duration,
-    delay,
+    blink: options?.blink,
   };
 };
 
@@ -237,8 +235,6 @@ const buildSideBulb = (
   t: number,
   color: BulbColorKey,
   angle: number,
-  duration: number,
-  delay: number,
   scale = 0.94
 ): PositionedBulb => {
   const pt = evalCubicBezier(wire[0], t);
@@ -250,45 +246,59 @@ const buildSideBulb = (
     angle,
     scale,
     depth: "fg",
-    duration,
-    delay,
   };
 };
 
+// 5 luces con parpadeo distribuidas de forma equilibrada (10% sup., 31% inf., 52% sup., 73% sup., 89% inf.)
 const ALL_BULBS: readonly PositionedBulb[] = [
   // --- GUIRNALDA SUPERIOR (primer plano) ---
-  buildTopBulb("t-red-1", TOP_WIRE_PRIMARY, 0, 0.14, "red", -40, 3.4, -0.4, { scale: 0.96 }),
-  buildTopBulb("t-yel-1", TOP_WIRE_PRIMARY, 0, 0.36, "yellow", -18, 4.1, -1.7, { scale: 0.94 }),
-  buildTopBulb("t-cya-1", TOP_WIRE_PRIMARY, 0, 0.85, "cyan", 20, 3.6, -2.5, { scale: 0.96 }),
-  buildTopBulb("t-red-2", TOP_WIRE_PRIMARY, 1, 0.04, "red", 0, 3.9, -0.9, { scale: 0.98 }),
-  buildTopBulb("t-ora-1", TOP_WIRE_PRIMARY, 1, 0.81, "orange", -18, 3.3, -2.1, { scale: 0.96 }),
-  buildTopBulb("t-mag-1", TOP_WIRE_PRIMARY, 2, 0.05, "magenta", 18, 4.3, -1.2, { scale: 0.98 }),
-  buildTopBulb("t-blu-1", TOP_WIRE_PRIMARY, 2, 0.28, "blue", -14, 3.7, -3.1, { scale: 0.94 }),
-  buildTopBulb("t-red-3", TOP_WIRE_PRIMARY, 2, 0.97, "red", 18, 3.5, -0.6, { scale: 0.96 }),
-  buildTopBulb("t-yel-2", TOP_WIRE_PRIMARY, 3, 0.54, "yellow", -16, 4.0, -2.8, { scale: 0.90 }),
-  buildTopBulb("t-grn-1", TOP_WIRE_PRIMARY, 3, 0.72, "green", 24, 3.2, -1.5, { scale: 0.96 }),
-  buildTopBulb("t-mag-2", TOP_WIRE_PRIMARY, 3, 0.88, "magenta", 38, 3.8, -0.2, { scale: 0.94 }),
+  buildTopBulb("t-red-1", TOP_WIRE_PRIMARY, 0, 0.14, "red", -40, { scale: 0.96 }),
+  buildTopBulb("t-yel-1", TOP_WIRE_PRIMARY, 0, 0.36, "yellow", -18, {
+    scale: 0.94,
+    blink: { duration: 4.4, delay: -0.4 },
+  }),
+  buildTopBulb("t-cya-1", TOP_WIRE_PRIMARY, 0, 0.85, "cyan", 20, { scale: 0.96 }),
+  buildTopBulb("t-red-2", TOP_WIRE_PRIMARY, 1, 0.04, "red", 0, { scale: 0.98 }),
+  buildTopBulb("t-ora-1", TOP_WIRE_PRIMARY, 1, 0.81, "orange", -18, { scale: 0.96 }),
+  buildTopBulb("t-mag-1", TOP_WIRE_PRIMARY, 2, 0.05, "magenta", 18, {
+    scale: 0.98,
+    blink: { duration: 4.8, delay: -2.4 },
+  }),
+  buildTopBulb("t-blu-1", TOP_WIRE_PRIMARY, 2, 0.28, "blue", -14, { scale: 0.94 }),
+  buildTopBulb("t-red-3", TOP_WIRE_PRIMARY, 2, 0.97, "red", 18, {
+    scale: 0.96,
+    blink: { duration: 4.2, delay: -1.3 },
+  }),
+  buildTopBulb("t-yel-2", TOP_WIRE_PRIMARY, 3, 0.54, "yellow", -16, { scale: 0.90 }),
+  buildTopBulb("t-grn-1", TOP_WIRE_PRIMARY, 3, 0.72, "green", 24, { scale: 0.96 }),
+  buildTopBulb("t-mag-2", TOP_WIRE_PRIMARY, 3, 0.88, "magenta", 38, { scale: 0.94 }),
 
   // --- GUIRNALDA SUPERIOR (profundidad bokeh suave de fondo) ---
-  buildTopBulb("t-bg-grn-1", TOP_WIRE_SECONDARY, 1, 0.16, "green", -14, 4.6, -2.0, { scale: 0.84, depth: "bg" }),
-  buildTopBulb("t-bg-cya-1", TOP_WIRE_SECONDARY, 1, 0.30, "cyan", 12, 4.9, -0.7, { scale: 0.80, depth: "bg" }),
-  buildTopBulb("t-bg-grn-2", TOP_WIRE_SECONDARY, 2, 0.76, "green", 20, 4.4, -3.3, { scale: 0.84, depth: "bg" }),
+  buildTopBulb("t-bg-grn-1", TOP_WIRE_SECONDARY, 1, 0.16, "green", -14, { scale: 0.84, depth: "bg" }),
+  buildTopBulb("t-bg-cya-1", TOP_WIRE_SECONDARY, 1, 0.30, "cyan", 12, { scale: 0.80, depth: "bg" }),
+  buildTopBulb("t-bg-grn-2", TOP_WIRE_SECONDARY, 2, 0.76, "green", 20, { scale: 0.84, depth: "bg" }),
 
   // --- GUIRNALDA INFERIOR (apuntando hacia arriba en los espacios libres) ---
-  buildBottomBulb("b-red-1", BOTTOM_WIRE_PRIMARY, 0, 0.94, "red", 148, 3.7, -1.1, { scale: 0.94 }),
-  buildBottomBulb("b-grn-1", BOTTOM_WIRE_PRIMARY, 1, 0.20, "green", 192, 3.3, -2.4, { scale: 0.95 }),
-  buildBottomBulb("b-cya-1", BOTTOM_WIRE_PRIMARY, 1, 0.78, "cyan", 214, 4.2, -0.5, { scale: 0.94 }),
-  buildBottomBulb("b-mag-1", BOTTOM_WIRE_PRIMARY, 1, 0.98, "magenta", 180, 3.5, -1.9, { scale: 0.96 }),
-  buildBottomBulb("b-red-2", BOTTOM_WIRE_PRIMARY, 2, 0.17, "red", 164, 3.9, -3.0, { scale: 0.95 }),
-  buildBottomBulb("b-yel-1", BOTTOM_WIRE_PRIMARY, 2, 0.95, "yellow", 176, 3.4, -0.8, { scale: 0.96 }),
-  buildBottomBulb("b-cya-2", BOTTOM_WIRE_PRIMARY, 3, 0.60, "cyan", 202, 4.0, -2.6, { scale: 0.94 }),
-  buildBottomBulb("b-mag-2", BOTTOM_WIRE_PRIMARY, 3, 0.84, "magenta", 148, 3.6, -1.4, { scale: 0.94 }),
-  buildBottomBulb("b-bg-mag", BOTTOM_WIRE_SECONDARY, 2, 0.56, "magenta", 184, 4.8, -2.2, { scale: 0.72, depth: "bg" }),
+  buildBottomBulb("b-red-1", BOTTOM_WIRE_PRIMARY, 0, 0.94, "red", 148, { scale: 0.94 }),
+  buildBottomBulb("b-grn-1", BOTTOM_WIRE_PRIMARY, 1, 0.20, "green", 192, {
+    scale: 0.95,
+    blink: { duration: 5.0, delay: -3.5 },
+  }),
+  buildBottomBulb("b-cya-1", BOTTOM_WIRE_PRIMARY, 1, 0.78, "cyan", 214, { scale: 0.94 }),
+  buildBottomBulb("b-mag-1", BOTTOM_WIRE_PRIMARY, 1, 0.98, "magenta", 180, { scale: 0.96 }),
+  buildBottomBulb("b-red-2", BOTTOM_WIRE_PRIMARY, 2, 0.17, "red", 164, { scale: 0.95 }),
+  buildBottomBulb("b-yel-1", BOTTOM_WIRE_PRIMARY, 2, 0.95, "yellow", 176, { scale: 0.96 }),
+  buildBottomBulb("b-cya-2", BOTTOM_WIRE_PRIMARY, 3, 0.60, "cyan", 202, {
+    scale: 0.94,
+    blink: { duration: 4.6, delay: -1.0 },
+  }),
+  buildBottomBulb("b-mag-2", BOTTOM_WIRE_PRIMARY, 3, 0.84, "magenta", 148, { scale: 0.94 }),
+  buildBottomBulb("b-bg-mag", BOTTOM_WIRE_SECONDARY, 2, 0.56, "magenta", 184, { scale: 0.72, depth: "bg" }),
 
   // --- BORDES LATERALES (izquierdo y derecho) ---
-  buildSideBulb("l-cya-1", "left", LEFT_WIRE_PRIMARY, 0.42, "cyan", -86, 3.5, -1.3, 0.92),
-  buildSideBulb("l-red-1", "left", LEFT_WIRE_SECONDARY, 0.72, "red", -112, 4.0, -2.7, 0.92),
-  buildSideBulb("r-grn-1", "right", RIGHT_WIRE_PRIMARY, 0.53, "green", 70, 3.6, -0.9, 0.94),
+  buildSideBulb("l-cya-1", "left", LEFT_WIRE_PRIMARY, 0.42, "cyan", -86, 0.92),
+  buildSideBulb("l-red-1", "left", LEFT_WIRE_SECONDARY, 0.72, "red", -112, 0.92),
+  buildSideBulb("r-grn-1", "right", RIGHT_WIRE_PRIMARY, 0.53, "green", 70, 0.94),
 ];
 
 interface SparkleConfig {
@@ -298,31 +308,41 @@ interface SparkleConfig {
   size: number;
   color: string;
   kind: "flare" | "star" | "dot";
-  duration: number;
-  delay: number;
 }
 
 const SPARKLES: readonly SparkleConfig[] = [
-  // Destellos tipo lens-flare de 4 puntas
-  { id: "fl-1", left: "7.5%", top: "40%", size: 12, color: "#60a5fa", kind: "flare", duration: 3.1, delay: -0.5 },
-  { id: "fl-2", left: "5.2%", top: "56%", size: 14, color: "#4ade80", kind: "flare", duration: 2.8, delay: -1.8 },
-  { id: "fl-3", left: "5.8%", top: "90%", size: 11, color: "#93c5fd", kind: "flare", duration: 3.5, delay: -1.1 },
-  { id: "fl-4", left: "61.8%", top: "16%", size: 12, color: "#ff5c77", kind: "flare", duration: 2.9, delay: -2.2 },
-  { id: "fl-5", left: "62.0%", top: "86%", size: 13, color: "#ff4d6d", kind: "flare", duration: 3.2, delay: -0.3 },
-  { id: "fl-6", left: "93.2%", top: "46%", size: 11, color: "#fb7185", kind: "flare", duration: 3.4, delay: -1.6 },
+  // Destellos fijos tipo lens-flare de 4 puntas (perímetro + zona central alrededor de las opciones)
+  { id: "fl-1", left: "7.5%", top: "40%", size: 11, color: "#60a5fa", kind: "flare" },
+  { id: "fl-2", left: "5.2%", top: "56%", size: 13, color: "#4ade80", kind: "flare" },
+  { id: "fl-3", left: "5.8%", top: "90%", size: 10, color: "#93c5fd", kind: "flare" },
+  { id: "fl-4", left: "61.8%", top: "16%", size: 11, color: "#ff5c77", kind: "flare" },
+  { id: "fl-5", left: "62.0%", top: "86%", size: 12, color: "#ff4d6d", kind: "flare" },
+  { id: "fl-6", left: "93.2%", top: "46%", size: 10, color: "#fb7185", kind: "flare" },
+  { id: "fl-c1", left: "25.5%", top: "64%", size: 10, color: "#fb7185", kind: "flare" },
+  { id: "fl-c2", left: "53.2%", top: "54%", size: 11, color: "#93c5fd", kind: "flare" },
+  { id: "fl-c3", left: "74.5%", top: "64%", size: 10, color: "#38bdf8", kind: "flare" },
 
-  // Estrellitas navideñas de 5 puntas
-  { id: "st-1", left: "39.8%", top: "11%", size: 8, color: "#38bdf8", kind: "star", duration: 3.6, delay: -0.9 },
-  { id: "st-2", left: "67.5%", top: "89%", size: 8, color: "#4ade80", kind: "star", duration: 3.3, delay: -2.4 },
-  { id: "st-3", left: "97.2%", top: "9%", size: 8, color: "#fbbf24", kind: "star", duration: 3.8, delay: -1.3 },
+  // Estrellitas navideñas fijas de 5 puntas (bordes + zona central rodeando las 4 opciones)
+  { id: "st-1", left: "39.8%", top: "11%", size: 8, color: "#38bdf8", kind: "star" },
+  { id: "st-2", left: "67.5%", top: "89%", size: 8, color: "#4ade80", kind: "star" },
+  { id: "st-3", left: "97.2%", top: "9%", size: 8, color: "#fbbf24", kind: "star" },
+  { id: "st-c1", left: "9.2%", top: "62%", size: 8, color: "#fbbf24", kind: "star" },
+  { id: "st-c2", left: "28.2%", top: "44%", size: 9, color: "#38bdf8", kind: "star" },
+  { id: "st-c3", left: "49.8%", top: "38%", size: 9.5, color: "#fde047", kind: "star" },
+  { id: "st-c4", left: "47.0%", top: "63%", size: 8, color: "#4ade80", kind: "star" },
+  { id: "st-c5", left: "71.8%", top: "44%", size: 9, color: "#f472b6", kind: "star" },
+  { id: "st-c6", left: "90.8%", top: "36%", size: 8, color: "#4ade80", kind: "star" },
 
-  // Puntitos cálidos de bokeh luminoso
-  { id: "dt-1", left: "2.8%", top: "26%", size: 3.5, color: "#fef3c7", kind: "dot", duration: 2.9, delay: -0.4 },
-  { id: "dt-2", left: "8.2%", top: "84%", size: 4, color: "#fde68a", kind: "dot", duration: 3.4, delay: -1.9 },
-  { id: "dt-3", left: "36.2%", top: "12%", size: 3, color: "#fef9c3", kind: "dot", duration: 3.1, delay: -2.6 },
-  { id: "dt-4", left: "36.8%", top: "90%", size: 3.5, color: "#fed7aa", kind: "dot", duration: 3.7, delay: -0.8 },
-  { id: "dt-5", left: "50.5%", top: "6%", size: 3.5, color: "#fef3c7", kind: "dot", duration: 2.8, delay: -1.5 },
-  { id: "dt-6", left: "80.8%", top: "6%", size: 3.5, color: "#fef08a", kind: "dot", duration: 3.3, delay: -2.1 },
+  // Puntitos cálidos fijos de bokeh luminoso
+  { id: "dt-1", left: "2.8%", top: "26%", size: 3.5, color: "#fef3c7", kind: "dot" },
+  { id: "dt-2", left: "8.2%", top: "84%", size: 4, color: "#fde68a", kind: "dot" },
+  { id: "dt-3", left: "36.2%", top: "12%", size: 3, color: "#fef9c3", kind: "dot" },
+  { id: "dt-4", left: "36.8%", top: "90%", size: 3.5, color: "#fed7aa", kind: "dot" },
+  { id: "dt-5", left: "50.5%", top: "6%", size: 3.5, color: "#fef3c7", kind: "dot" },
+  { id: "dt-6", left: "80.8%", top: "6%", size: 3.5, color: "#fef08a", kind: "dot" },
+  { id: "dt-c1", left: "29.5%", top: "58%", size: 3.5, color: "#fef08a", kind: "dot" },
+  { id: "dt-c2", left: "70.2%", top: "58%", size: 3.5, color: "#fde68a", kind: "dot" },
+  { id: "dt-c3", left: "92.0%", top: "66%", size: 3.5, color: "#fef3c7", kind: "dot" },
 ];
 
 const WireLayer = ({
@@ -431,18 +451,20 @@ const NeonBulb = ({ bulb }: { bulb: PositionedBulb }) => {
         <div
           style={{
             position: "relative",
-            animation: `xmasBulbBreathe ${bulb.duration}s ease-in-out ${bulb.delay}s infinite`,
             transformOrigin: "0 0",
+            animation: bulb.blink
+              ? `xmasBulbBlink ${bulb.blink.duration}s ease-in-out ${bulb.blink.delay}s infinite`
+              : undefined,
           }}
         >
           {/* Capa 1: Halo ambiental neón amplio sobre el fondo oscuro */}
           <div
             style={{
               position: "absolute",
-              left: "-26px",
-              top: "-10px",
-              width: "52px",
-              height: "52px",
+              left: "-21px",
+              top: "-8px",
+              width: "42px",
+              height: "42px",
               borderRadius: "9999px",
               background: `radial-gradient(circle, ${palette.glowInner} 0%, ${palette.glowOuter} 35%, rgba(0,0,0,0) 72%)`,
               pointerEvents: "none",
@@ -453,10 +475,10 @@ const NeonBulb = ({ bulb }: { bulb: PositionedBulb }) => {
           <div
             style={{
               position: "absolute",
-              left: "-11px",
-              top: "1px",
-              width: "22px",
-              height: "28px",
+              left: "-9px",
+              top: "0.5px",
+              width: "18px",
+              height: "23px",
               borderRadius: "9999px",
               background: `radial-gradient(ellipse at center, ${palette.corona} 0%, ${palette.glowInner} 42%, rgba(0,0,0,0) 76%)`,
               pointerEvents: "none",
@@ -467,12 +489,12 @@ const NeonBulb = ({ bulb }: { bulb: PositionedBulb }) => {
           <svg
             aria-hidden="true"
             viewBox="-9 -2 18 34"
-            width="13.5"
-            height="25.5"
+            width="11"
+            height="20.8"
             style={{
               position: "absolute",
-              left: "-6.75px",
-              top: "-1.5px",
+              left: "-5.5px",
+              top: "-1.2px",
               overflow: "visible",
               display: "block",
             }}
@@ -571,7 +593,7 @@ const SparkleAccent = ({ item }: { item: SparkleConfig }) => {
           backgroundColor: item.color,
           boxShadow: `0 0 ${item.size * 2.5}px ${item.color}`,
           transform: "translate(-50%, -50%)",
-          animation: `xmasBokehPulse ${item.duration}s ease-in-out ${item.delay}s infinite`,
+          opacity: 0.85,
         }}
       />
     );
@@ -598,7 +620,6 @@ const SparkleAccent = ({ item }: { item: SparkleConfig }) => {
           display: "block",
           overflow: "visible",
           filter: `drop-shadow(0 0 3px ${item.color})`,
-          animation: `xmasSparkleTwinkle ${item.duration}s ease-in-out ${item.delay}s infinite`,
         }}
       >
         {item.kind === "flare" ? (
@@ -666,38 +687,20 @@ export const ChristmasNavbarLights: React.FC = () => {
         <NeonBulb key={bulb.id} bulb={bulb} />
       ))}
 
-      {/* Destellos, estrellitas y bokeh navideño */}
+      {/* Destellos, estrellitas y bokeh navideño (fijos) */}
       {SPARKLES.map((item) => (
         <SparkleAccent key={item.id} item={item} />
       ))}
 
       <style>{`
-        @keyframes xmasBulbBreathe {
+        @keyframes xmasBulbBlink {
           0%, 100% {
-            opacity: 0.85;
-            transform: scale(0.97);
-          }
-          50% {
             opacity: 1;
             transform: scale(1.03);
           }
-        }
-        @keyframes xmasSparkleTwinkle {
-          0%, 100% {
-            opacity: 0.38;
-            transform: scale(0.74) rotate(0deg);
-          }
           50% {
-            opacity: 1;
-            transform: scale(1.18) rotate(14deg);
-          }
-        }
-        @keyframes xmasBokehPulse {
-          0%, 100% {
-            opacity: 0.35;
-          }
-          50% {
-            opacity: 0.95;
+            opacity: 0.18;
+            transform: scale(0.92);
           }
         }
       `}</style>
