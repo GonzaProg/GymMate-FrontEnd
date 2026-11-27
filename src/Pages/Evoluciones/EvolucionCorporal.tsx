@@ -3,6 +3,9 @@ import { createPortal } from "react-dom";
 import { AppStyles } from "../../Styles/AppStyles";
 import { useEvolucionCorporal, type PosicionFoto } from "../../Hooks/Evoluciones/useEvolucionCorporal";
 import { X, Plus, ChevronDown, ChevronUp, Scale, Ruler, Camera, Trash2, Calendar, Pencil, ImagePlus } from "lucide-react";
+import { ChristmasCardDecor, type ChristmasSectionVariant } from "../../Components/StudentsHome/ChristmasCardDecor";
+
+const EVO_CARD_VARIANTS: readonly ChristmasSectionVariant[] = ["evo-card-1", "evo-card-2", "evo-card-3"];
 
 export const EvolucionCorporal = ({ currentUser }: { currentUser: any }) => {
     const {
@@ -73,9 +76,10 @@ export const EvolucionCorporal = ({ currentUser }: { currentUser: any }) => {
             
             {/* FORMULARIO DE CARGA */}
             <div className={`${AppStyles.glassCard} p-0 overflow-hidden`}>
+                <ChristmasCardDecor variant="evo-form" />
                 <button 
                     onClick={() => isFormOpen ? resetForm() : setIsFormOpen(true)}
-                    className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
+                    className="relative z-10 w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
                 >
                     <h3 className="text-white font-bold flex items-center gap-2">
                         {isFormOpen ? <><X className="w-5 h-5"/> Cancelar Registro</> : <><Plus className="w-5 h-5"/> Añadir Nuevo Registro</>}
@@ -83,7 +87,7 @@ export const EvolucionCorporal = ({ currentUser }: { currentUser: any }) => {
                     <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isFormOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                <div className={`transition-all duration-500 ease-in-out px-2 overflow-hidden ${isFormOpen ? 'max-h-[2000px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
+                <div className={`relative z-10 transition-all duration-500 ease-in-out px-2 overflow-hidden ${isFormOpen ? 'max-h-[2000px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
                     <form onSubmit={handleGuardar} className="space-y-6 pt-4 border-t border-white/10">
                         
                         <div>
@@ -168,15 +172,19 @@ export const EvolucionCorporal = ({ currentUser }: { currentUser: any }) => {
                     </div>
                 ) : historial.length === 0 ? (
                     <div className={`${AppStyles.glassCard} flex flex-col items-center justify-center text-center py-10 border-dashed border-2 border-white/10`}>
-                        <Scale className="w-16 h-16 text-gray-600 mb-4 opacity-50" />
-                        <p className="text-gray-400 font-medium">Aún no has registrado tu progreso.</p>
-                        <p className="text-gray-500 text-sm mt-1">¡Comienza hoy mismo!</p>
+                        <ChristmasCardDecor variant="evo-empty" />
+                        <div className="relative z-10 flex flex-col items-center">
+                            <Scale className="w-16 h-16 text-gray-600 mb-4 opacity-50" />
+                            <p className="text-gray-400 font-medium">Aún no has registrado tu progreso.</p>
+                            <p className="text-gray-500 text-sm mt-1">¡Comienza hoy mismo!</p>
+                        </div>
                     </div>
                 ) : (
                     <>
-                        {registrosVisibles.map(item => (
+                        {registrosVisibles.map((item, idx) => (
                             <div key={item.id} className="bg-gray-800/50 border border-white/5 rounded-2xl p-4 flex flex-col gap-4 relative overflow-hidden group">
-                                <div className="flex justify-between items-center z-10 border-b border-white/5 pb-3">
+                                <ChristmasCardDecor variant={EVO_CARD_VARIANTS[idx % EVO_CARD_VARIANTS.length]} />
+                                <div className="relative flex justify-between items-center z-10 border-b border-white/5 pb-3">
                                     <div>
                                         <p className="text-3xl font-black text-white tracking-tight flex items-center gap-2">
                                             {item.peso} <span className="text-sm text-green-400 font-bold uppercase mt-1">kg</span>

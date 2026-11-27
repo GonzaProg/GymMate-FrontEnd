@@ -6,6 +6,9 @@ import { usePersonalRecords } from "../../Hooks/PersonalRecords/usePersonalRecor
 import { VideoEjercicio } from "../../Components/VideoEjercicios/VideoEjercicio"; 
 import { CustomSelect } from "../../Components/UI/CustomSelect";
 import { Info, ChevronDown, Trophy, Pencil, Plus, Search, Video, Play, Dumbbell, ArrowUp, ArrowDown, Trash2, X } from "lucide-react";
+import { ChristmasCardDecor, type ChristmasSectionVariant } from "../../Components/StudentsHome/ChristmasCardDecor";
+
+const PR_CARD_VARIANTS: readonly ChristmasSectionVariant[] = ["pr-card-1", "pr-card-2", "pr-card-3"];
 
 export const MyPersonalRecords = () => {
     const {
@@ -32,9 +35,10 @@ export const MyPersonalRecords = () => {
             
             {/* ACORDEÓN DE INFORMACIÓN */}
             <div className={AppStyles.glassCard.replace("p-8", "p-2")}>
+                <ChristmasCardDecor variant="pr-info" />
                 <button 
                     onClick={() => setIsInfoOpen(!isInfoOpen)}
-                    className="w-full p-2 flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
+                    className="relative z-10 w-full p-2 flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
                 >
                     <h3 className="text-blue-400 font-bold flex items-center gap-2">
                         <Info className="w-5 h-5" /> Información
@@ -42,7 +46,7 @@ export const MyPersonalRecords = () => {
                     <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isInfoOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                <div className={`transition-all duration-500 ease-in-out px-4 ${isInfoOpen ? 'max-h-[500px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
+                <div className={`relative z-10 transition-all duration-500 ease-in-out px-4 ${isInfoOpen ? 'max-h-[500px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
                     <div className="pt-4 border-t border-white/10 text-gray-300 text-sm leading-relaxed">
                         <p>
                             <strong className="text-green-400 text-base">¡Prepárate para competir!</strong> <Trophy className="w-5 h-5 inline text-yellow-400 align-text-bottom ml-1" /><br/><br/>
@@ -52,7 +56,7 @@ export const MyPersonalRecords = () => {
                     </div>
                 </div>
 
-                <div className={`transition-all duration-500 ease-in-out px-5 ${isInfoOpen ? 'max-h-[500px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
+                <div className={`relative z-10 transition-all duration-500 ease-in-out px-5 ${isInfoOpen ? 'max-h-[500px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
                     <div className="pt-4 border-t border-white/10 text-yellow-400 text-sm leading-relaxed flex items-start gap-2">
                          <Info className="w-4 h-4 shrink-0 mt-0.5" /> 
                          <p>Solo los PRs que tengan video se van a tomar en cuenta para el Ranking.</p>
@@ -62,6 +66,7 @@ export const MyPersonalRecords = () => {
 
             {/* FORMULARIO DE CARGA (DESPLEGABLE) */}
             <div className={`${AppStyles.glassCard} p-0 overflow-visible`}>
+                <ChristmasCardDecor variant="pr-form" />
                 
                 <button 
                     onClick={() => {
@@ -71,7 +76,7 @@ export const MyPersonalRecords = () => {
                             setIsFormOpen(!isFormOpen);
                         }
                     }}
-                    className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
+                    className="relative z-10 w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
                 >
                     <h3 className="text-white font-bold flex items-center gap-2">
                         {editandoId ? <><Pencil className="w-5 h-5"/> Editando Record</> : <><Plus className="w-5 h-5"/> Añadir Nuevo Record</>}
@@ -79,7 +84,7 @@ export const MyPersonalRecords = () => {
                     <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isFormOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                <div className={`transition-all duration-500 ease-in-out px-1 ${isFormOpen ? 'max-h-[1200px] opacity-100 pb-5 overflow-visible' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+                <div className={`relative z-10 transition-all duration-500 ease-in-out px-1 ${isFormOpen ? 'max-h-[1200px] opacity-100 pb-5 overflow-visible' : 'max-h-0 opacity-0 overflow-hidden'}`}>
                     <div className="space-y-4 pt-4 border-t border-white/10">
                         
                         {!editandoId && (
@@ -191,12 +196,13 @@ export const MyPersonalRecords = () => {
                         No se encontraron records.
                     </p>
                 ) : (
-                    prs.map(pr => (
-                        <div key={pr.id} className="bg-gray-800/50 border border-white/5 rounded-2xl p-4 flex gap-4 items-center group">
+                    prs.map((pr, idx) => (
+                        <div key={pr.id} className="bg-gray-800/50 border border-white/5 rounded-2xl p-4 flex gap-4 items-center relative overflow-hidden group">
+                            <ChristmasCardDecor variant={PR_CARD_VARIANTS[idx % PR_CARD_VARIANTS.length]} />
                             
                             <div 
                                 onClick={() => pr.videoUrl ? setVideoSeleccionado(pr.videoUrl) : null}
-                                className={`w-20 h-20 bg-black/50 rounded-xl overflow-hidden shrink-0 border border-white/10 relative flex items-center justify-center ${pr.videoUrl ? 'cursor-pointer hover:border-green-500 transition-colors' : ''}`}
+                                className={`w-20 h-20 bg-black/50 rounded-xl overflow-hidden shrink-0 border border-white/10 relative z-10 flex items-center justify-center ${pr.videoUrl ? 'cursor-pointer hover:border-green-500 transition-colors' : ''}`}
                             >
                                 {pr.videoUrl ? (
                                     <>
@@ -208,7 +214,7 @@ export const MyPersonalRecords = () => {
                                 )}
                             </div>
 
-                            <div className="flex-1">
+                            <div className="flex-1 relative z-10">
                                 <h4 className="text-white font-bold">{pr.ejercicio.nombre}</h4>
                                 
                                 {/* NUEVO: CONTENEDOR DEL PESO CON COMPARACIÓN */}
@@ -234,7 +240,7 @@ export const MyPersonalRecords = () => {
                                 <p className="text-xs text-gray-500">{new Date(pr.fechaActualizacion).toLocaleDateString()}</p>
                             </div>
 
-                            <div className="flex flex-col gap-2 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                            <div className="relative z-10 flex flex-col gap-2 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                 <button onClick={() => handleEdit(pr)} className={`${AppStyles.btnEdit} flex items-center justify-center`}><Pencil className="w-4 h-4"/></button>
                                 <button onClick={() => handleDelete(pr.id, pr.videoUrl)} className={`${AppStyles.btnDelete} flex items-center justify-center`}><Trash2 className="w-4 h-4"/></button>
                             </div>

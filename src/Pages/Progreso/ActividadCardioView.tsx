@@ -4,6 +4,9 @@ import { AppStyles } from "../../Styles/AppStyles";
 import { Input } from "../../Components/UI/Input";
 import { ChevronLeft, ChevronRight, Activity, Clock, X, Navigation, Bike, Footprints, Plus, ChevronDown, Trophy, ArrowUp, ArrowDown } from "lucide-react";
 import { showError } from "../../Helpers/Alerts";
+import { ChristmasCardDecor, type ChristmasSectionVariant } from "../../Components/StudentsHome/ChristmasCardDecor";
+
+const CARDIO_ITEM_VARIANTS: readonly ChristmasSectionVariant[] = ["cardio-item-1", "cardio-item-2"];
 
 export const ActividadCardioView = () => {
     const { historial, estadisticas, loading, registrarActividad, eliminarActividad } = useActividadCardio();
@@ -119,10 +122,11 @@ export const ActividadCardioView = () => {
         return { caminarKm, correrKm, biciKm, totalKm, diff, hasPrev };
     };
 
-    const StatCard = ({ title, periodStats, isYear }: { title: string, periodStats: any, isYear?: boolean }) => {
+    const StatCard = ({ title, periodStats, isYear, decorVariant }: { title: string, periodStats: any, isYear?: boolean, decorVariant: ChristmasSectionVariant }) => {
         if (!periodStats) return null;
         return (
             <div className={`p-4 rounded-2xl border flex items-center justify-between relative overflow-hidden ${isYear ? 'bg-gradient-to-r from-orange-500/20 to-orange-900/20 border-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.1)]' : 'bg-gray-900/50 border-white/5'}`}>
+                <ChristmasCardDecor variant={decorVariant} />
                 {isYear && <Trophy className="absolute right-4 top-1/2 -translate-y-1/2 w-20 h-20 text-orange-500/10 rotate-12 pointer-events-none" />}
                 
                 {/* Izquierda: Título y Total */}
@@ -172,9 +176,10 @@ export const ActividadCardioView = () => {
         <div className="space-y-6 animate-fade-in pb-24">
             {/* AGREGAR ACTIVIDAD (ACORDEÓN) */}
             <div className={`${AppStyles.glassCard} overflow-hidden`}>
+                <ChristmasCardDecor variant="cardio-form" />
                 <button 
                     onClick={() => setIsFormOpen(!isFormOpen)}
-                    className="w-full flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
+                    className="relative z-10 w-full flex items-center justify-between hover:bg-white/5 transition-colors rounded-2xl"
                 >
                     <h3 className="text-white font-bold flex items-center gap-2">
                         <Plus className="w-5 h-5 text-orange-500"/> Añadir Actividad
@@ -182,7 +187,7 @@ export const ActividadCardioView = () => {
                     <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isFormOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                <div className={`transition-all duration-500 ease-in-out ${isFormOpen ? 'max-h-[800px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
+                <div className={`relative z-10 transition-all duration-500 ease-in-out ${isFormOpen ? 'max-h-[800px] opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
                     <div className="space-y-4 pt-4 border-t border-white/10">
                         <div className="grid grid-cols-2 gap-3">
                             <select
@@ -255,9 +260,9 @@ export const ActividadCardioView = () => {
             {/* ESTADÍSTICAS GLOBALES */}
             {estadisticas && (
                 <div className="flex flex-col gap-3">
-                    <StatCard title="Esta Semana" periodStats={getStatsForPeriod(estadisticas.semanaActual)} />
-                    <StatCard title="Este Mes" periodStats={getStatsForPeriod(estadisticas.mesActual, estadisticas.mesAnterior)} />
-                    <StatCard title="Este Año" periodStats={getStatsForPeriod(estadisticas.anioActual, estadisticas.anioAnterior)} isYear={true} />
+                    <StatCard title="Esta Semana" periodStats={getStatsForPeriod(estadisticas.semanaActual)} decorVariant="cardio-week" />
+                    <StatCard title="Este Mes" periodStats={getStatsForPeriod(estadisticas.mesActual, estadisticas.mesAnterior)} decorVariant="cardio-month" />
+                    <StatCard title="Este Año" periodStats={getStatsForPeriod(estadisticas.anioActual, estadisticas.anioAnterior)} isYear={true} decorVariant="cardio-year" />
                 </div>
             )}
 
@@ -268,21 +273,22 @@ export const ActividadCardioView = () => {
                     Historial
                 </h3>
                 
-                <div className="flex items-center justify-between bg-black/30 p-3 rounded-2xl border border-white/5 mb-4">
+                <div className="relative overflow-hidden flex items-center justify-between bg-black/30 p-3 rounded-2xl border border-white/5 mb-4">
+                    <ChristmasCardDecor variant="cardio-week-bar" />
                     <button 
                         disabled={weekOffset >= 3}
                         onClick={() => setWeekOffset(prev => prev + 1)}
-                        className="p-2 text-gray-400 disabled:opacity-30 hover:text-white transition-colors"
+                        className="relative z-10 p-2 text-gray-400 disabled:opacity-30 hover:text-white transition-colors"
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </button>
-                    <span className="font-bold text-orange-400">
+                    <span className="relative z-10 font-bold text-orange-400">
                         {weekOffset === 0 ? "Esta Semana" : `Hace ${weekOffset} semana${weekOffset > 1 ? 's' : ''}`}
                     </span>
                     <button 
                         disabled={weekOffset === 0} 
                         onClick={() => setWeekOffset(prev => prev - 1)}
-                        className="p-2 text-gray-400 disabled:opacity-30 hover:text-white transition-colors"
+                        className="relative z-10 p-2 text-gray-400 disabled:opacity-30 hover:text-white transition-colors"
                     >
                         <ChevronRight className="w-6 h-6" />
                     </button>
@@ -309,15 +315,19 @@ export const ActividadCardioView = () => {
                 {loading ? (
                     <p className="text-center text-gray-500 py-6">Cargando...</p>
                 ) : historialDiaSeleccionado.length === 0 ? (
-                    <div className="bg-white/5 rounded-2xl p-6 text-center border border-white/5">
-                        <Activity className="w-10 h-10 mx-auto text-gray-600 mb-2" />
-                        <p className="text-gray-500 text-sm">No hay actividades registradas en este día.</p>
+                    <div className="relative overflow-hidden bg-white/5 rounded-2xl p-6 text-center border border-white/5">
+                        <ChristmasCardDecor variant="cardio-empty" />
+                        <div className="relative z-10">
+                            <Activity className="w-10 h-10 mx-auto text-gray-600 mb-2" />
+                            <p className="text-gray-500 text-sm">No hay actividades registradas en este día.</p>
+                        </div>
                     </div>
                 ) : (
                     <div className="space-y-3">
-                        {historialDiaSeleccionado.map((act) => (
-                            <div key={act.id} className="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between group">
-                                <div className="flex items-center gap-4">
+                        {historialDiaSeleccionado.map((act, idx) => (
+                            <div key={act.id} className="relative overflow-hidden bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center justify-between group">
+                                <ChristmasCardDecor variant={CARDIO_ITEM_VARIANTS[idx % CARDIO_ITEM_VARIANTS.length]} />
+                                <div className="relative z-10 flex items-center gap-4">
                                     <div className="bg-black/30 p-3 rounded-xl border border-white/5">
                                         {getIcono(act.tipo)}
                                     </div>
@@ -342,7 +352,7 @@ export const ActividadCardioView = () => {
                                 
                                 <button 
                                     onClick={() => eliminarActividad(act.id)}
-                                    className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-full transition-colors"
+                                    className="relative z-10 p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-full transition-colors"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>

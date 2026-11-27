@@ -17,9 +17,8 @@ import { AppLauncher } from '@capacitor/app-launcher';
 import { App as CapacitorApp } from '@capacitor/app';
 import { showError } from "../../Helpers/Alerts";
 import MpLogo from "../../assets/MP_RGB_HANDSHAKE_color_horizontal.svg";
+import { ChristmasCardDecor } from "../../Components/StudentsHome/ChristmasCardDecor";
 import AnilloStudentHome from "../../assets/Navidad/AnilloStudentHome.svg";
-import CoposDeNieve3 from "../../assets/Navidad/CoposDeNieve3.svg";
-import CoposDeNieve1 from "../../assets/Navidad/CoposDeNieve1.svg";
 
 export const StudentHome = ({ currentUser }: { currentUser: any }) => {
     const [loadingMP, setLoadingMP] = useState<number | null>(null);
@@ -190,9 +189,11 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
 
                         return (
                             <div key={plan.userPlanId} className={`bg-black/50 p-5 rounded-3xl shadow-xl relative overflow-hidden group border border-white/5`}>
+                                <ChristmasCardDecor variant="planes" />
                                 
                                 <img src={AnilloStudentHome} alt="AnilloStudentHome" className="absolute top-6 right-6 w-20 h-20 z-10" />
 
+                                <div className="relative z-10">
                                 {/* Cabecera de la tarjeta */}
                                 <div className="flex items-center gap-4 mb-6">
                                     {gymLogo ? (
@@ -243,6 +244,7 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
                                         </button>
                                     </div>
                                 )}
+                                </div>
                             </div>
                         )
                     })}
@@ -257,10 +259,8 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
                     {/* TABLÓN DE ANUNCIOS */}
                     {sortedNotificaciones.length > 0 && (
                         <div className={`${AppStyles.glassCard.replace("bg-gray-900/80", "bg-black/50")} mb-8 !p-4 border-white/5`}>
-                            <div className="flex items-center justify-between mb-4 pr-2">
-                                
-                                <img src={CoposDeNieve3} alt="CoposDeNieve3" className="absolute -top-2 -right-2 w-24 h-24 z-10" />
-
+                            <ChristmasCardDecor variant="anuncios" />
+                            <div className="flex items-center justify-between mb-4 pr-2 relative z-10">
                                 <h3 className="text-white font-bold text-lg flex items-center gap-2">
                                     <Megaphone className="w-7 h-7" />
                                     Tablón de Anuncios
@@ -272,7 +272,7 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
                                 )}
                             </div>
                             <div 
-                                className={`flex gap-4 mt-2 overflow-x-auto pb-2 snap-x snap-mandatory after:content-[''] after:w-2 after:flex-shrink-0 ${AppStyles.customScrollbar}`}
+                                className={`relative z-10 flex gap-4 mt-2 overflow-x-auto pb-2 snap-x snap-mandatory after:content-[''] after:w-2 after:flex-shrink-0 ${AppStyles.customScrollbar}`}
                                 style={{ scrollbarWidth: 'none' }}
                                 onTouchStart={(e) => e.stopPropagation()}
                                 onTouchMove={(e) => e.stopPropagation()}
@@ -312,10 +312,9 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
                 <>
                     {/* TARJETA DE CONCURRENCIA */}
                     <div className={`${AppStyles.glassCard.replace("bg-gray-900/80", "bg-black/50")} relative overflow-hidden border-green-500/30 shadow-green-900/10`}>
+                        <ChristmasCardDecor variant="concurrencia" />
                         <div className="absolute top-0 right-0 w-40 h-40 bg-green-500/30 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                         
-                        <img src={CoposDeNieve1} alt="CoposDeNieve1" className="absolute bottom-0 left-0 w-24 h-24 z-10" />
-
                         {/* BOTÓN COMPACTO DE ESCANEO */}
                         <button 
                             onClick={() => setIsScannerOpen(true)}
@@ -375,6 +374,7 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
                         onClick={() => navigate('/dietas')}
                 className={`${AppStyles.glassCard.replace("bg-gray-900/80", "bg-black/50")} mb-8 relative overflow-hidden border-orange-500/20 cursor-pointer transition-transform hover:scale-[1.02] active:scale-95`}
             >
+                <ChristmasCardDecor variant="nutricion" />
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl pointer-events-none"></div>
                 <div className="flex items-center justify-between mb-4 relative z-10">
                     <div className="flex items-center gap-2">
@@ -468,6 +468,7 @@ export const StudentHome = ({ currentUser }: { currentUser: any }) => {
             <div className="px-4 space-y-6">
                 {/* FRASE MOTIVADORA DEL DÍA */}
             <div className={`${AppStyles.glassCard.replace("bg-gray-900/80", "bg-black/50")} relative overflow-visible border-green-500/20 shadow-lg shadow-green-500/20`}>
+                <ChristmasCardDecor variant="frase" />
                 <div className="flex flex-col gap-4 relative z-10">
                     <div className="flex items-start gap-3">
                         <Quote className="w-5 h-5 text-blue-400 flex-shrink-0 opacity-80 mt-0.5" />
