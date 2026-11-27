@@ -20,6 +20,7 @@ import { useUserPlan } from "../Hooks/Planes/useUserPlan";
 import { AppStyles } from "../Styles/AppStyles";
 import { BackgroundLayout } from "../Components/BackgroundLayout"; 
 import { NavbarSuperior } from "../Components/Mobile/NavbarSuperior";
+import { ChristmasCardDecor } from "../Components/StudentsHome/ChristmasCardDecor";
 import { StatsGrid } from "../Components/Dashboard/StatsGrid";
 import { CloudinaryApi } from "../Helpers/Cloudinary/Cloudinary";
 import { getCurrentAppVersion, isVersionOutdated } from "../Config/AppVersion";
@@ -292,16 +293,17 @@ export const Home = () => {
 
         <div className="flex h-screen overflow-hidden font-sans">
           <WhatsAppModal />
-          <aside className="w-64 bg-[#24192f99] border-r border-white/5 flex flex-col justify-between md:flex shrink-0 transition-all duration-300">
+          <aside className="relative overflow-hidden w-64 bg-[#24192f99] border-r border-white/5 flex flex-col justify-between md:flex shrink-0 transition-all duration-300">
 
             <div className="flex-1 overflow-hidden flex flex-col">
-              <div className="h-20 flex items-center px-6 border-b border-white/5 cursor-pointer shrink-0 group" onClick={() => handleSidebarClick("Inicio")}>
-                <span className="text-2xl font-bold">
+              <div className="relative h-20 flex items-center px-6 border-b border-white/5 cursor-pointer shrink-0 group" onClick={() => handleSidebarClick("Inicio")}>
+                <ChristmasCardDecor variant="cardio-week-bar" />
+                <span className="relative z-10 text-2xl font-bold">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00AEEF] to-[#0071BC]">Gym</span>
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF8C00] to-[#d3932b]">Mate</span>
                 </span>
                 {(currentUser?.gym as any)?.logoUrl && (
-                  <div className="flex items-center ml-3 pl-3 border-l border-white/20 h-10 animate-fade-in">
+                  <div className="relative z-10 flex items-center ml-3 pl-3 border-l border-white/20 h-10 animate-fade-in">
                     <img 
                       src={CloudinaryApi.getUrl((currentUser?.gym as any)?.logoUrl) || undefined} 
                       alt="Logo Gym"
@@ -313,7 +315,9 @@ export const Home = () => {
                   </div>
                 )}
               </div>
-              <nav className={`p-4 space-y-2 mt-4 ${AppStyles.customScrollbar}`}>
+              <div className="relative flex-1 min-h-0 overflow-hidden flex flex-col">
+                <ChristmasCardDecor variant="nutricion" />
+                <nav className={`relative z-10 flex-1 p-4 space-y-2 mt-4 ${AppStyles.customScrollbar}`}>
                 
                 <SidebarItem icon={Icons.dashboard} label="Inicio" active={activeTab === "Inicio"} onClick={() => handleSidebarClick("Inicio")} />
                 <SidebarItem icon={Icons.notas} label="Notas y Recordatorios" active={activeTab === "Notas y Recordatorios"} onClick={() => handleSidebarClick("Notas y Recordatorios")} />
@@ -371,13 +375,17 @@ export const Home = () => {
                   </>
                 )}
               </nav>
+              </div>
             </div>
-            <div className="shrink-0 bg-[#1a1225]">
-              <WhatsAppStatus />
-              <div className="p-4">
-                <button onClick={logout} className="flex items-center gap-3 w-full px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all font-medium text-sm">
-                  <span>{Icons.salir}</span> Cerrar Sesión
-                </button>
+            <div className="relative overflow-hidden shrink-0 bg-[#1a1225]">
+              <ChristmasCardDecor variant="pr-card-2" />
+              <div className="relative z-10">
+                <WhatsAppStatus />
+                <div className="p-4">
+                  <button onClick={logout} className="flex items-center gap-3 w-full px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all font-medium text-sm">
+                    <span>{Icons.salir}</span> Cerrar Sesión
+                  </button>
+                </div>
               </div>
             </div>
           </aside>

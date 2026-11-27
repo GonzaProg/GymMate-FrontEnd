@@ -8,6 +8,8 @@ import { ProfileStyles } from "../../Styles/ProfileStyles";
 import { formatearFechaUTC } from "../../Helpers/DateUtils";
 import { getCurrentAppVersion } from "../../Config/AppVersion";
 import { Camera, Edit2, Lock, AlertTriangle, ChevronDown, ChevronUp, LogOut } from "lucide-react";
+import { ChristmasCardDecor } from "../../Components/StudentsHome/ChristmasCardDecor";
+import PerfilNavidad from "../../assets/Navidad/PerfilNavidad.jpg"
 
 interface ProfileProps {
   isMobile?: boolean; // Prop para diferenciar el contexto
@@ -63,11 +65,16 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
 
           {/* --- CARD PERFIL --- */}
           <div className="w-full backdrop-blur-xl bg-gray-900/10 border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
+            <ChristmasCardDecor variant="nutricion" />
             
             {/* Fondo de Perfil */}
-            <div className={ProfileStyles.coverGradient}></div>
+            <div className={`${ProfileStyles.coverGradient}`} style={{ backgroundImage: `url(${PerfilNavidad})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+              <ChristmasCardDecor variant="frase" />
+              {/* Overlay para oscurecer un poco la imagen y que el avatar/texto destaque */}
+              <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0,0,0,0.1)' }}></div>
+            </div>
 
-            <div className="px-6 md:px-10 pb-10">
+            <div className="relative z-10 px-6 md:px-10 pb-10">
               <div className={ProfileStyles.avatarContainer}>
                 <div className={ProfileStyles.avatarWrapper}>
                   {avatarSrc ? (
@@ -215,8 +222,9 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
 
           {/* CARD SEGURIDAD */}
           <div className={AppStyles.glassCard + " p-6 md:p-8 bg-gray-900/10 relative overflow-hidden"}>
+            <ChristmasCardDecor variant="concurrencia" />
             {!showPasswordSection ? (
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+              <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                   <div className="flex flex-col md:flex-row items-center gap-4">
                     <div className="bg-gray-800 p-2 rounded-lg text-white"><Lock className="w-7 h-7" /></div>
                     <div>
@@ -229,7 +237,7 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
                   </button>
               </div>
             ) : (
-              <div className="animate-fade-in-up space-y-6">
+              <div className="relative z-10 animate-fade-in-up space-y-6">
                 <h3 className={AppStyles.sectionTitle.replace('text-xl', 'text-lg text-gray-300 border-white/5')}><Lock className="w-5 h-5 inline-block mr-2" /> ACTUALIZAR CONTRASEÑA</h3>
                 
                 <div className="bg-black/20 p-6 rounded-xl border border-white/5 space-y-4">
@@ -251,8 +259,9 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
           {/* --- CARD ZONA DE PELIGRO (SOLO ALUMNO) --- */}
           {userData.rol === 'Alumno' && (
             <div className={AppStyles.glassCard + " p-6 md:p-8 bg-red-900/10 border-red-500/20 relative overflow-hidden"}>
+                <ChristmasCardDecor variant="anuncios" />
                 <div 
-                  className="flex justify-between items-center cursor-pointer select-none"
+                  className="relative z-10 flex justify-between items-center cursor-pointer select-none"
                   onClick={() => setShowDangerZone(!showDangerZone)}
                 >
                     <div className="flex items-center gap-4">
@@ -268,7 +277,7 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
                 </div>
 
                 {showDangerZone && (
-                  <div className="mt-6 pt-6 border-t border-red-500/20 animate-fade-in-up flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                  <div className="relative z-10 mt-6 pt-6 border-t border-red-500/20 animate-fade-in-up flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                       <div className="text-gray-300 text-sm md:max-w-md">
                           Al eliminar tu cuenta, todos tus datos (rutinas, progresos, dietas, etc.) se borrarán permanentemente. Esta acción <strong>no se puede deshacer</strong>.
                       </div>
@@ -286,8 +295,9 @@ export const Profile = ({ isMobile = false }: ProfileProps) => {
 
           {/* --- CARD CERRAR SESIÓN (SOLO MOBILE/ALUMNO) --- */}
           {isMobile && (
-            <div className={AppStyles.glassCard + " p-8 bg-gray-900/10"}>                
-                <div className="flex justify-between items-center">
+            <div className={AppStyles.glassCard + " p-8 bg-gray-900/10"}>
+                <ChristmasCardDecor variant="pr-card-2" />
+                <div className="relative z-10 flex justify-between items-center">
                     <div className="flex items-center gap-4">
                       <div className="bg-red-900/30 p-2 rounded-lg"><LogOut className="w-7 h-7 text-red-500" /></div>
                       <span className="font-bold text-gray-100 text-base block">Cerrar Sesión</span>

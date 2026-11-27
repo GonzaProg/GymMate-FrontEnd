@@ -12,9 +12,12 @@ import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import RegaloAbierto from "../../assets/Navidad/RegaloAbierto.png";
 import RegaloCerrado from "../../assets/Navidad/RegaloCerrado.png";
+import FondoRutinasNavidad from "../../assets/Navidad/FondoRutinasNavidad.jpg";
+
 
 import { createPortal } from "react-dom";
 import { Inbox, CloudDownload, CheckCircle, Download, Search, Dumbbell, ArrowLeft, Play, Activity, Hand, Info, Calendar, Edit2, Save, X } from "lucide-react";
+import RegaloDiasRutinas from "../../assets/Navidad/RegaloDiasRutinas.svg";
 
 // Componente para renderizar miniaturas offline desde IndexedDB
 const OfflineThumbnail = ({ path, alt }: { path: string; alt: string }) => {
@@ -519,7 +522,7 @@ export const MyRoutines = () => {
                                     : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
                             }`}
                         >
-                            <Calendar className="w-3.5 h-3.5" />
+                            <img src={RegaloDiasRutinas} alt="Regalo" className="mr-1 w-5 h-5 object-contain drop-shadow-[0_0_5px_rgba(249,115,22,0.5)]" />
                             Día {index + 1}
                         </button>
                     ))}
@@ -797,13 +800,19 @@ export const MyRoutines = () => {
                         className={MyRoutinesStyles.routineCard + " relative"}
                     >
                     
-                    <div className={AppStyles.gradientDivider}></div>
+                        {/* FONDO NAVIDAD INDIVIDUAL */}
+                        <div 
+                          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 pointer-events-none"
+                          style={{ backgroundImage: `url(${FondoRutinasNavidad})` }}
+                        />
+
+                        <div className="relative z-10 h-full flex flex-col">
 
                       {/* BOTONES SUPERIORES (Edición y Descarga) */}
                       <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
                           <button 
                             onClick={(e) => handleEditRoutine(e, rutina)}
-                            className="p-2 rounded-full bg-blue-500/20 text-blue-400 backdrop-blur-md border border-blue-500/50 hover:bg-blue-500 hover:text-white transition-all active:scale-95 shadow-lg"
+                            className="p-2 rounded-full bg-blue-500/20 text-blue-500 backdrop-blur-md border border-blue-500 hover:bg-blue-500 hover:text-white transition-all active:scale-95 shadow-lg"
                             title="Editar Rutina"
                           >
                               <Edit2 className="w-5 h-5" />
@@ -811,7 +820,7 @@ export const MyRoutines = () => {
                           
                           <button 
                             onClick={(e) => handleDownload(e, rutina)}
-                            className="p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all active:scale-95 shadow-lg"
+                            className="p-2 rounded-full bg-black/40 backdrop-blur-md border border-white hover:bg-white/10 transition-all active:scale-95 shadow-lg"
                           >
                             {isDownloading ? (
                                 <CloudDownload className="w-5 h-5 text-green-400 animate-pulse" />
@@ -834,7 +843,7 @@ export const MyRoutines = () => {
                       <div className={MyRoutinesStyles.cardHeader}>
                           <h3 className={`${MyRoutinesStyles.cardTitle} whitespace-normal break-words leading-tight mb-2`}>{rutina.nombreRutina}</h3>
                           {esGrupo && (
-                              <span className="inline-flex items-center gap-1 mt-1 bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded text-xs border border-purple-500/30">
+                              <span className="inline-flex items-center gap-1 mt-1 bg-purple-500/40 text-purple-100 px-2 py-0.5 rounded text-xs border border-purple-500/30">
                                   <Calendar className="w-3 h-3" />
                                   {rutina.dias.length} días
                               </span>
@@ -842,19 +851,19 @@ export const MyRoutines = () => {
                       </div>
                       
                       <div className="mb-4">
-                          <p className="text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider">Ejercicios:</p>
+                          <p className="text-sm text-white mb-2 font-bold uppercase tracking-wider">Ejercicios:</p>
                           
                           {esGrupo ? (
                               /* Vista de días para grupos */
                               <div className="space-y-2">
                                   {rutina.dias.slice(0, 3).map((dia: any, diaIndex: number) => (
-                                      <div key={diaIndex} className="bg-black/20 rounded-lg p-2 border border-white/5">
+                                      <div key={diaIndex} className="bg-black/40 rounded-lg p-2 border border-white/5">
                                           <p className="text-xs text-green-400 font-bold mb-1">Día {diaIndex + 1} · {dia.detalles?.length || 0} ej.</p>
                                           {dia.detalles?.slice(0, 2).map((d: any, i: number) => (
-                                              <p key={i} className="text-xs text-gray-500">• {d.ejercicio.nombre}</p>
+                                              <p key={i} className="text-xs text-white">• {d.ejercicio.nombre}</p>
                                           ))}
                                           {(dia.detalles?.length || 0) > 2 && (
-                                              <p className="text-xs text-gray-600 italic">... y {dia.detalles.length - 2} más</p>
+                                              <p className="text-xs text-white italic">... y {dia.detalles.length - 2} más</p>
                                           )}
                                       </div>
                                   ))}
@@ -888,6 +897,7 @@ export const MyRoutines = () => {
                           <span className={MyRoutinesStyles.viewDetailBtn}>
                             VER DETALLE <Search className="w-5 h-5 inline-block ml-1" />
                           </span>
+                      </div>
                       </div>
                     </div>
                 );
